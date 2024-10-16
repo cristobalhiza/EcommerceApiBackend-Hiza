@@ -14,7 +14,8 @@ btnSubmit.addEventListener('click', async (e) => {
         return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]{2,}(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!emailRegex.test(email)) {
         mostrarMensaje('Por favor, introduzca un email válido.');
         return;
     }
@@ -26,22 +27,21 @@ btnSubmit.addEventListener('click', async (e) => {
 
     try {
         const respuesta = await fetch('/api/sessions/login', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            },
+            body: JSON.stringify(body)
         });
 
         const datos = await respuesta.json();
 
-        if (respuesta.status >= 400) {
-            setTimeout(() => {
-                mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
-            }, 3000)
+        if (!respuesta.ok) {  
+            mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
         } else {
-            console.log(datos)
-            localStorage.setItem("token", datos.token)
+            console.log(datos);
+            localStorage.setItem("token", datos.token);
             // window.location.href = `/current`;
         }
     } catch (error) {
