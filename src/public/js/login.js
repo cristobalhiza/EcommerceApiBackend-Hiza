@@ -30,7 +30,7 @@ btnSubmit.addEventListener('click', async (e) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
+            }
         });
 
         const datos = await respuesta.json();
