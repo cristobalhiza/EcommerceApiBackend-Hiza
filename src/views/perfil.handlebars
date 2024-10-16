@@ -1,0 +1,14 @@
+<h2>current {{isLogin.nombre}}</h2>
+<hr />
+<p>Correo electrónico: {{isLogin.email}}</p>
+<p>Permisos: {{isLogin.role}}</p>
+
+<script>
+  function mostrarMensaje(mensaje) { divMensajes.textContent = mensaje;
+  setTimeout(() => { divMensajes.textContent = ''; }, 6000); }
+  document.addEventListener('DOMContentLoaded', () => { function
+  getQueryParam(param) { const urlParams = new
+  URLSearchParams(window.location.search); return urlParams.get(param); } const
+  mensaje = getQueryParam('mensaje'); if (mensaje) { mostrarMensaje(mensaje); }
+  });
+</script>
