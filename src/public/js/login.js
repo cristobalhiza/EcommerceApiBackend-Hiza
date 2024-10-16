@@ -26,9 +26,11 @@ btnSubmit.addEventListener('click', async (e) => {
 
     try {
         const respuesta = await fetch('/api/sessions/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
         });
 
         const datos = await respuesta.json();
@@ -38,7 +40,9 @@ btnSubmit.addEventListener('click', async (e) => {
                 mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
             }, 3000)
         } else {
-            window.location.href = `/current`;
+            console.log(datos)
+            localStorage.setItem("token", datos.token)
+            // window.location.href = `/current`;
         }
     } catch (error) {
         mostrarMensaje('Hubo un problema con la conexión. Por favor, inténtelo más tarde.');

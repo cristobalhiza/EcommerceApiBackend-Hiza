@@ -3,7 +3,7 @@ import { config } from "../config/config.js"
 
 export const auth=(req, res, next)=>{
     let {web}=req.query
-    if(!req.headers.authorization){
+    if(!req.headers.authorization || !localStorage.token){
         if(web){
             return res.redirect('/login?mensaje=No hay usuario autenticados')
         }else{

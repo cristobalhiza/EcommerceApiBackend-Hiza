@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
+import { config } from '../config/config.js';
 export const router = Router()
 
 router.get('/error', (req, res)=>{
@@ -21,9 +22,13 @@ router.post(
     '/login',
     passport.authenticate('login', {session: false, failureRedirect: 'api/sessions/error'}),
     (req, res)=>{
-        const token = jwt.sign(req.user, config.SECRET, {expiresIn:3600})
+const token = jwt.sign(
+            { id: req.user._id, email: req.user.email, role: req.user.role },
+            config.SECRET,
+            { expiresIn: '1h' } 
+        );
         res.setHeader('Content-Type','application/json');
-        return res.status(201).json({payload:`Registro exitoso para ${req.user.first_name}`, usuarioLogeado:req.user});
+        return res.status(200).json({payload:`Login exitoso para ${req.user.first_name}`, usuarioLogeado:req.user, token: token});
     }
 )
 
