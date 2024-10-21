@@ -41,6 +41,20 @@ router.post(
     }
 )
 
+router.get('/current', passportCall('current'), (req, res) => {
+
+    if (!req.user) {
+        return res.status(401).json({ error: 'No se pudo autenticar el usuario.' });
+    }
+
+    res.status(200).json({
+        id: req.user._id,
+        first_name: req.user.first_name,
+        email: req.user.email,
+        role: req.user.role
+    });
+});
+
 router.get('/logout', (req, res) => {
 
     res.clearCookie('tokenCookie');
