@@ -1,7 +1,19 @@
 import passport from "passport";
 import local from "passport-local";
+import passportJWT from 'passport-jwt'
 import { UsuariosManager } from "../dao/usuariosManager.js";
 import { comparaPassword, generaHash } from "../utils.js";
+import { config } from "./config.js";
+
+const buscarToken = req => {
+    const token = null
+    
+    if (!req.cookies.tokenCookie) {
+        token = req.cookies.tokenCookie
+    }
+
+    return token
+}
 
 export const iniciarPassport = () => {
     //paso 1
@@ -55,7 +67,7 @@ export const iniciarPassport = () => {
                     if (!usuario) {
                         return done(null, false)
                     }
-                    if(!comparaPassword(password, usuario.password)){
+                    if (!comparaPassword(password, usuario.password)) {
                         return done(null, false)
                     }
                     delete usuario.password
@@ -71,3 +83,20 @@ export const iniciarPassport = () => {
     //pasport.serializeUser()
     //pasport.deserializeUser()
 };
+
+passport.use('current',
+    new passportJWT.Strategy(
+        {
+            secretOrKey: config.SECRET,
+            jwtFromRequest: new passportJWT.ExtractJwt.fromExtractors([buscarToken]),
+        },
+        async (usuario, done) => {
+            try {
+                return done(null, usuario)
+            } catch (Error) {
+                return done(error)
+            }
+        }
+
+    )
+)

@@ -27,8 +27,9 @@ const token = jwt.sign(
             config.SECRET,
             { expiresIn: '1h' } 
         );
+        res.cookie('tokenCookie', token, {httpOnly: true})
         res.setHeader('Content-Type','application/json');
-        return res.status(200).json({payload:`Login exitoso para ${req.user.first_name}`, usuarioLogeado:req.user, token: token});
+        return res.status(200).json({payload:`Login exitoso para ${req.user.first_name}`, usuarioLogeado:req.user});
     }
 )
 

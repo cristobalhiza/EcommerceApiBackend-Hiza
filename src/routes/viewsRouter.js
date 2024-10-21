@@ -1,23 +1,28 @@
 import { Router } from 'express';
-import { auth } from '../middleware/auth.js';
+import passport from 'passport';
 
-export const router = Router()
+
+export const router = Router();
 
 router.get('/', (req, res) => {
-
-    res.status(200).render('home', {})
-})
+    const isLogin = !!req.headers.authorization;
+    res.status(200).render('home', { isLogin });
+});
 
 router.get('/registro', (req, res) => {
-
-    res.status(200).render('registro', {})
-})
+    const isLogin = !!req.headers.authorization;
+    res.status(200).render('registro', { isLogin });
+});
 
 router.get('/login', (req, res) => {
+    const isLogin = !!req.headers.authorization;
+    res.status(200).render('login', { isLogin });
+});
 
-    res.status(200).render('login', {})
-})
+router.get('/current', passport.authenticate('current', {session:false}), (req, res) => {
 
-router.get('/current', auth, (req, res) => {
-    (200).render('current', {});
-})
+    res.status(200).render('current', {
+        isLogin: true, 
+        user: req.user 
+    });
+});

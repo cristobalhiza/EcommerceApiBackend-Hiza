@@ -3,6 +3,7 @@ import path from 'path';
 import express from 'express';
 import {engine} from 'express-handlebars';
 import passport from 'passport'
+import cookieParser from 'cookie-parser';
 
 import { UsuariosManager } from './dao/usuariosManager.js';
 import {router as vistasRouter} from './routes/viewsRouter.js'
@@ -19,6 +20,7 @@ const app=express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 //estos dos últimos middlewares sirven para procesar información compleja que llegue desde la request, desde el cliente
+app.use(cookieParser())
 app.use(express.static('./src/public'))
 
 app.engine('handlebars', engine({
