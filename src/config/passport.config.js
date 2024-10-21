@@ -77,8 +77,8 @@ export const iniciarPassport = () => {
     //pasport.deserializeUser()
 
     passport.use(new GitHubStrategy({
-        clientID: config.GITHUB_CLIENT_ID, 
-        clientSecret: config.GITHUB_CLIENT_SECRET, 
+        clientID: config.GITHUB_CLIENT_ID,
+        clientSecret: config.GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:3000/api/sessions/github/callback",
     },
         async (accessToken, refreshToken, profile, done) => {

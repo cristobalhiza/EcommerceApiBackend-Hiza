@@ -2,13 +2,13 @@ import { usersModel } from "./models/usuarios.model.js";
 import { generaHash } from "../utils.js";
 
 
-export class UsuariosManager{
+export class UsuariosManager {
 
-    static async create(usuario={}){
-        let nuevoUsuario=await usersModel.create(usuario);
+    static async create(usuario = {}) {
+        let nuevoUsuario = await usersModel.create(usuario);
         return nuevoUsuario.toJSON();
     }
-    static async getBy(filtro={}){
+    static async getBy(filtro = {}) {
         return await usersModel.findOne(filtro).lean()
     }
     static async crearAdminInicial() {

@@ -58,19 +58,19 @@ router.get('/current', passportCall('current'), (req, res) => {
 router.get('/logout', (req, res) => {
 
     res.clearCookie('tokenCookie');
-    
+
     const { web } = req.query;
     if (web) {
         return res.redirect(`/login?mensaje=¡Logout exitoso!`);
     }
-    
+
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json({ mensaje: '¡Logout exitoso!' });
 });
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'], session: false }));
 
-router.get('/github/callback', 
+router.get('/github/callback',
     passport.authenticate('github', { failureRedirect: '/api/sessions/error', session: false }),
     (req, res) => {
         const token = jwt.sign(

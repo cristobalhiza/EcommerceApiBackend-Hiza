@@ -6,23 +6,19 @@ import { auth } from '../middleware/auth.js';
 export const router = Router();
 
 router.get('/', (req, res) => {
-    const isLogin = !!req.headers.authorization;
-    res.status(200).render('home', { isLogin });
+    res.status(200).render('home');
 });
 
 router.get('/registro', (req, res) => {
-    const isLogin = !!req.headers.authorization;
-    res.status(200).render('registro', { isLogin });
+    res.status(200).render('registro');
 });
 
 router.get('/login', (req, res) => {
-    const isLogin = !!req.headers.authorization;
-    res.status(200).render('login', { isLogin });
+    res.status(200).render('login');
 });
 
 router.get('/current', passportCall('current'), auth('user'), (req, res) => {
     res.status(200).render('current', {
-        isLogin: true, 
-        user: req.user 
+        user: req.user
     });
 });

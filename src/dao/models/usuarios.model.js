@@ -8,7 +8,7 @@ export const usersModel = mongoose.model(
         },
         last_name: {
             type: String
-            },
+        },
         email: {
             type: String,
             unique: true,
@@ -22,14 +22,14 @@ export const usersModel = mongoose.model(
             required: true
         },
         cart: {
-            type:String
+            type: String
         },
         role: {
             type: String,
             default: 'user'
         }
     },
-{
-    timestamps: true,
-    strict: false
-}));
+        {
+            timestamps: true,
+            strict: false
+        }));

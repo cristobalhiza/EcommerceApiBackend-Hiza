@@ -43,7 +43,7 @@ btnSubmit.addEventListener('click', async (e) => {
 
         if (respuesta.status >= 400) {
             mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
-        } else if (datos.nuevoUsuario) { 
+        } else if (datos.nuevoUsuario) {
             mostrarMensaje(`Registro exitoso para ${datos.nuevoUsuario.email}`);
             setTimeout(() => {
                 window.location.href = `/login?mensaje=Registro Exitoso para ${datos.nuevoUsuario.email}`;
