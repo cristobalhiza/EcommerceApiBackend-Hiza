@@ -10,7 +10,6 @@ import {router as vistasRouter} from './routes/viewsRouter.js'
 import {router as sessionsRouter} from './routes/sessionsRouter.js'
 import { connDB } from './connDB.js';
 import { config } from './config/config.js';
-import { auth } from './middleware/auth.js';
 import { iniciarPassport } from './config/passport.config.js';
 
 const PORT=config.PORT;

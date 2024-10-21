@@ -26,18 +26,27 @@ btnSubmit.addEventListener('click', async (e) => {
     };
 
     try {
-        
-        const respuesta = await fetch('/api/sessions/login', {
 
+        const respuesta = await fetch('/api/sessions/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         });
+
+        if (!respuesta.ok) {
+            const errorData = await respuesta.text();
+            console.error('Respuesta no válida:', errorData);
+            mostrarMensaje('Ocurrió un error al procesar la solicitud. Verifique sus credenciales.');
+            return;
+        }
 
         const datos = await respuesta.json();
 
-        if (!respuesta.ok) {  
-            mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
-        } else {
+        if (datos.usuarioLogeado) {
             console.log(datos);
-            window.location.href = `/current`;
+            window.location.href = '/current';
+        } else {
+            mostrarMensaje('Ocurrió un error al iniciar sesión. Inténtelo de nuevo.');
         }
     } catch (error) {
         mostrarMensaje('Hubo un problema con la conexión. Por favor, inténtelo más tarde.');

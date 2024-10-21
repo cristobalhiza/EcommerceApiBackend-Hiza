@@ -6,14 +6,8 @@ import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
 
 const buscarToken = req => {
-    const token = null
-    
-    if (!req.cookies.tokenCookie) {
-        token = req.cookies.tokenCookie
-    }
-
-    return token
-}
+    return req.cookies.tokenCookie || null;
+};
 
 export const iniciarPassport = () => {
     //paso 1
@@ -29,13 +23,11 @@ export const iniciarPassport = () => {
                 try {
                     const { first_name } = req.body;
                     if (!first_name) {
-                        console.log('Falta el campo first_name');
-                        return done(null, false);
+                        return done(null, false, {message:'Complete el campo nombre'});
                     }
                     const existe = await UsuariosManager.getBy({ email: username });
                     if (existe) {
-                        console.log('El usuario ya existe');
-                        return done(null, false);
+                        return done(null, false, {message:`Ya existe un usuario con email ${username}`});
                     }
                     password = generaHash(password);
                     console.log('Creando nuevo usuario');
@@ -92,7 +84,11 @@ passport.use('current',
         },
         async (usuario, done) => {
             try {
+                if(usuario)
                 return done(null, usuario)
+            else {
+                return done(null, false)
+            }
             } catch (Error) {
                 return done(error)
             }

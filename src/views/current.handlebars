@@ -1,7 +1,7 @@
-<h2>current {{isLogin.nombre}}</h2>
+<h2>Cuenta: {{user.first_name}}</h2>
 <hr />
-<p>Correo electrónico: {{isLogin.email}}</p>
-<p>Permisos: {{isLogin.role}}</p>
+<p>Correo electrónico: {{user.email}}</p>
+<p>Permisos: {{user.role}}</p>
 
 <script>
   function mostrarMensaje(mensaje) { divMensajes.textContent = mensaje;

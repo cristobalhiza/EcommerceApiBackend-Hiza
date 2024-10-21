@@ -1,4 +1,4 @@
-const inputNombre = document.getElementById('nombre');
+const inputNombre = document.getElementById('first_name');
 const inputEmail = document.getElementById('email');
 const inputPassword = document.getElementById('password');
 const btnSubmit = document.getElementById('btnSubmit');
@@ -7,11 +7,11 @@ const divMensajes = document.getElementById('mensajes');
 btnSubmit.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    const nombre = inputNombre.value.trim();
+    const first_name = inputNombre.value.trim();
     const email = inputEmail.value.trim();
     const password = inputPassword.value.trim();
 
-    if (!nombre || !email || !password) {
+    if (!first_name || !email || !password) {
         mostrarMensaje('Complete todos los campos obligatorios.');
         return;
     }
@@ -27,7 +27,7 @@ btnSubmit.addEventListener('click', async (e) => {
     }
 
     const body = {
-        nombre,
+        first_name,
         email,
         password
     };
@@ -43,11 +43,13 @@ btnSubmit.addEventListener('click', async (e) => {
 
         if (respuesta.status >= 400) {
             mostrarMensaje(datos.error || 'Ocurrió un error al procesar la solicitud.');
-        } else {
+        } else if (datos.nuevoUsuario) { 
             mostrarMensaje(`Registro exitoso para ${datos.nuevoUsuario.email}`);
             setTimeout(() => {
                 window.location.href = `/login?mensaje=Registro Exitoso para ${datos.nuevoUsuario.email}`;
             }, 2000);
+        } else {
+            mostrarMensaje('Respuesta inesperada del servidor.');
         }
     } catch (error) {
         mostrarMensaje('Hubo un problema con la conexión. Por favor, inténtelo más tarde.');
