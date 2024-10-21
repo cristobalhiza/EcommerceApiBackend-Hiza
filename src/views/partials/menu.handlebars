@@ -1,22 +1,22 @@
-<ul style="display: flex; list-style: none; padding: 0; margin: 0;">
-    <li style="margin-right: 15px;">
-        <a href="/">Home</a>
-    </li>
-    {{#if isLogin}}
-    <li style="margin-right: 15px;">
-        <a href="/current?web=1">current</a>
-    </li>
-    <li>
-        <a href="/api/sessions/logout?web=1">Logout</a>
-    </li>
-
-    {{else}}
-    <li style="margin-right: 15px;">
-        <a href="/registro">Registro</a>
-    </li>
-    <li style="margin-right: 15px;">
-        <a href="/login">Login</a>
-    </li>
-
-    {{/if}}
-</ul>
+<nav class="navbar">
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        {{#if isLogin}}
+        <li>
+            <a href="/current?web=1">current</a>
+        </li>
+        <li>
+            <a href="/api/sessions/logout?web=1">Logout</a>
+        </li>
+        {{else}}
+        <li>
+            <a href="/registro">Registro</a>
+        </li>
+        <li>
+            <a href="/login">Login</a>
+        </li>
+        {{/if}}
+    </ul>
+</nav>

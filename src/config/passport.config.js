@@ -1,6 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 import passportJWT from 'passport-jwt'
+import GitHubStrategy from 'passport-github2'
 import { UsuariosManager } from "../dao/usuariosManager.js";
 import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
@@ -23,11 +24,11 @@ export const iniciarPassport = () => {
                 try {
                     const { first_name } = req.body;
                     if (!first_name) {
-                        return done(null, false, {message:'Complete el campo nombre'});
+                        return done(null, false, { message: 'Complete el campo nombre' });
                     }
                     const existe = await UsuariosManager.getBy({ email: username });
                     if (existe) {
-                        return done(null, false, {message:`Ya existe un usuario con email ${username}`});
+                        return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
                     password = generaHash(password);
                     console.log('Creando nuevo usuario');
@@ -74,6 +75,35 @@ export const iniciarPassport = () => {
     //solo si usamos sessions
     //pasport.serializeUser()
     //pasport.deserializeUser()
+
+    passport.use(new GitHubStrategy({
+        clientID: config.GITHUB_CLIENT_ID, 
+        clientSecret: config.GITHUB_CLIENT_SECRET, 
+        callbackURL: "http://localhost:3000/api/sessions/github/callback",
+    },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const email = profile.emails ? profile.emails[0].value : `${profile.username}@github.com`;
+                let user = await UsuariosManager.getBy({ email });
+
+                if (!user) {
+                    const randomPassword = Math.random().toString(36).slice(-8);
+                    const hashedPassword = generaHash(randomPassword);
+
+                    const nuevoUsuario = {
+                        first_name: profile.displayName || profile.username,
+                        email: email,
+                        password: hashedPassword,
+                        role: 'user'
+                    };
+                    user = await UsuariosManager.create(nuevoUsuario);
+                }
+
+                return done(null, user);
+            } catch (error) {
+                return done(error);
+            }
+        }));
 };
 
 passport.use('current',
@@ -84,11 +114,11 @@ passport.use('current',
         },
         async (usuario, done) => {
             try {
-                if(usuario)
-                return done(null, usuario)
-            else {
-                return done(null, false)
-            }
+                if (usuario)
+                    return done(null, usuario)
+                else {
+                    return done(null, false)
+                }
             } catch (Error) {
                 return done(error)
             }
