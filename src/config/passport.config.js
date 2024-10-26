@@ -105,7 +105,6 @@ export const iniciarPassport = () => {
             }
         }));
 };
-
 passport.use('current',
     new passportJWT.Strategy(
         {
