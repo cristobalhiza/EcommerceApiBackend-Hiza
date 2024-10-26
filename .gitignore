@@ -1,3 +1,4 @@
 node_modules
 PROJECT_STRUCTURE.txt
 githubApi.txt
+.env
