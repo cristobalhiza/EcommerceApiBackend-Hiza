@@ -20,7 +20,6 @@ export const iniciarPassport = () => {
                 usernameField: "email",
             },
             async (req, username, password, done) => {
-                console.log('iniciando registro')
                 try {
                     const { first_name } = req.body;
                     if (!first_name) {
@@ -31,14 +30,12 @@ export const iniciarPassport = () => {
                         return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
                     password = generaHash(password);
-                    console.log('Creando nuevo usuario');
 
                     const nuevoUsuario = await UsuariosManager.create({
                         first_name,
                         email: username,
                         password,
                     });
-                    console.log('Usuario creado con éxito');
                     return done(null, nuevoUsuario);
 
                 } catch (error) {

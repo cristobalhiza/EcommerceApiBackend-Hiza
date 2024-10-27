@@ -1,5 +1,18 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
+
+const envFile = {
+    production: '.env.prod',
+    development: '.env.dev',
+    test: '.env.test'
+}[process.env.NODE_ENV];
+
+const envPath = fs.existsSync(envFile) ? envFile : '.env';
+
+console.log(`Cargando archivo de entorno: ${envPath}`);
+
 dotenv.config({
+    path: envPath,
     override: true
 });
 
@@ -11,4 +24,3 @@ export const config = {
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET
 };
-
