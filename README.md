@@ -25,7 +25,7 @@ Este es el proyecto de la **Primera Pre-Entrega** del curso de Backend II de Cod
 │   ├── dao
 │   │   ├── models
 │   │   │   ├── usuarios.model.js
-│   │   ├── usuariosManager.js
+│   │   ├── UserManager.js
 │   ├── middleware
 │   │   ├── auth.js
 │   │   ├── checkAuth.js

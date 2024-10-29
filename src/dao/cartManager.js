@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import Cart from './models/cartsModel.js';
+import Cart from './models/cart.model.js';
 
-export class CartsManager {
+export class CartManager {
     static async addProductToCart(cartId, productId, quantity) {
         try {
             if (quantity <= 0) {

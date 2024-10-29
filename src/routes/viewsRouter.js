@@ -31,7 +31,7 @@ router.get('/:cid', async (req, res) => {
             return res.status(400).render('cart', { error: 'El ID del carrito no es válido.' });
         }
 
-        const cart = await CartsManager.getCart(cid);
+        const cart = await CartManager.getCart(cid);
 
         if (!cart) {
             return res.status(404).render('cart', { error: 'Carrito no encontrado' });
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
 
-        const result = await ProductsManager.get(page, limit);
+        const result = await ProductManager.get(page, limit);
 
         res.status(200).render('index', {
             products: result.docs,         
@@ -72,7 +72,7 @@ router.get('/:pid', async (req, res) => {
             return res.status(400).json({ error: "El ID del producto no es válido" });
         }
 
-        const product = await ProductsManager.getBy({ _id: pid });
+        const product = await ProductManager.getBy({ _id: pid });
         if (product) {
             res.status(200).render('productDetails', { product });
         } else {

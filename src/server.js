@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 
 import { __dirname } from './utils.js';
-import { UsuariosManager } from './dao/usuarioManager.js';
+import { UserManager } from './dao/userManager.js';
 import { router as vistasRouter } from './routes/viewsRouter.js';
 import { router as sessionsRouter } from './routes/sessionsRouter.js';
 import { connDB } from './connDB.js';
@@ -22,7 +22,7 @@ export class Server {
         this.routes();
         this.handleErrors();
         this.connectDatabase();
-        UsuariosManager.crearAdminInicial();
+        UserManager.crearAdminInicial();
     }
 
     middlewares() {

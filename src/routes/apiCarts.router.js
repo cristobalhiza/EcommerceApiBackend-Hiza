@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { isValidObjectId } from 'mongoose';
-import { CartsManager } from '../dao/cartsManager.js';
+import { CartManager } from '../dao/CartManager.js';
 import Product from '../dao/models/productsModel.js';
 import Cart from '../dao/models/cartsModel.js';
 import { procesaErrores } from '../utils.js';
@@ -10,7 +10,7 @@ const router = Router();
 //crea carro vacío
 router.post('/', async (req, res) => {
     try {
-        const newCart = await CartsManager.create();
+        const newCart = await CartManager.create();
         res.status(201).json({ message: 'Carrito creado', cart: newCart });
     } catch (error) {
         return procesaErrores(res, error)
@@ -61,7 +61,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
             return res.status(400).json({ error: 'La cantidad debe ser un número positivo' });
         }
 
-        const updatedCart = await CartsManager.addProductToCart(cid, pid, parsedQuantity);
+        const updatedCart = await CartManager.addProductToCart(cid, pid, parsedQuantity);
 
         res.status(200).json({ message: 'Producto agregado al carrito', cart: updatedCart });
     } catch (error) {
@@ -82,7 +82,7 @@ router.put('/:cid', async (req, res) => {
             return res.status(400).json({ error: 'Debes enviar un arreglo de productos' });
         }
 
-        const updatedCart = await CartsManager.update(cid, { products });
+        const updatedCart = await CartManager.update(cid, { products });
 
         res.status(200).json({ message: 'Carrito actualizado', cart: updatedCart });
     } catch (error) {
@@ -104,7 +104,7 @@ router.put('/:cid/product/:pid', async (req, res) => {
             return res.status(400).json({ error: 'La cantidad debe ser un número positivo' });
         }
 
-        const updatedCart = await CartsManager.updateProductQuantity(cid, pid, parsedQuantity);
+        const updatedCart = await CartManager.updateProductQuantity(cid, pid, parsedQuantity);
 
         res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
     } catch (error) {
@@ -120,7 +120,7 @@ router.delete('/:cid/product/:pid', async (req, res) => {
             return res.status(400).json({ error: 'El ID del carrito o producto no es válido' });
         }
 
-        const updatedCart = await CartsManager.deleteProductFromCart(cid, pid);
+        const updatedCart = await CartManager.deleteProductFromCart(cid, pid);
 
         res.status(200).json({ message: 'Producto eliminado del carrito', cart: updatedCart });
     } catch (error) {
@@ -136,7 +136,7 @@ router.delete('/:cid', async (req, res) => {
             return res.status(400).json({ error: 'El ID del carrito no es válido' });
         }
 
-        const clearedCart = await CartsManager.clearCart(cid);
+        const clearedCart = await CartManager.clearCart(cid);
 
         res.status(200).json({ message: 'Carrito vaciado correctamente', cart: clearedCart });
     } catch (error) {
@@ -146,7 +146,7 @@ router.delete('/:cid', async (req, res) => {
 
 router.get('/', async(req, res)=>{
     try {
-        const carts = await CartsManager.getAllCarts();
+        const carts = await CartManager.getAllCarts();
         res.status(200).json(carts);    
     } catch(error) {
         return procesaErrores(res, error);
@@ -159,7 +159,7 @@ router.get('/:cid', async (req, res) => {
         if (!isValidObjectId(cid)) {
             return res.status(400).json({ error: 'El ID del carrito no es válido' })
         }
-        const cart = await CartsManager.getCart(cid);
+        const cart = await CartManager.getCart(cid);
         res.status(200).json({ cart })
     } catch (error) {
         return procesaErrores(res, error)

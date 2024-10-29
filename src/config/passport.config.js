@@ -2,7 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import passportJWT from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
-import { UsuariosManager } from "../dao/usuarioManager.js";
+import { UserManager } from "../dao/userManager.js";
 import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
 
@@ -25,13 +25,13 @@ export const iniciarPassport = () => {
                     if (!first_name) {
                         return done(null, false, { message: 'Complete el campo nombre' });
                     }
-                    const existe = await UsuariosManager.getBy({ email: username });
+                    const existe = await UserManager.getBy({ email: username });
                     if (existe) {
                         return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
                     password = generaHash(password);
 
-                    const nuevoUsuario = await UsuariosManager.create({
+                    const nuevoUsuario = await UserManager.create({
                         first_name,
                         email: username,
                         password,
@@ -53,7 +53,7 @@ export const iniciarPassport = () => {
             },
             async (username, password, done) => {
                 try {
-                    const usuario = await UsuariosManager.getBy({ email: username })
+                    const usuario = await UserManager.getBy({ email: username })
                     if (!usuario) {
                         return done(null, false)
                     }
@@ -81,7 +81,7 @@ export const iniciarPassport = () => {
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const email = profile.emails ? profile.emails[0].value : `${profile.username}@github.com`;
-                let user = await UsuariosManager.getBy({ email });
+                let user = await UserManager.getBy({ email });
 
                 if (!user) {
                     const randomPassword = Math.random().toString(36).slice(-8);
@@ -93,7 +93,7 @@ export const iniciarPassport = () => {
                         password: hashedPassword,
                         role: 'user'
                     };
-                    user = await UsuariosManager.create(nuevoUsuario);
+                    user = await UserManager.create(nuevoUsuario);
                 }
 
                 return done(null, user);

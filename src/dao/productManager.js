@@ -1,6 +1,6 @@
-import Product from './models/productsModel.js';
+import Product from './models/product.model.js'
 
-export default class ProductsManager {
+export default class ProductManager {
 
     static async get(page = 1, limit = 10) {
         try {
@@ -10,19 +10,15 @@ export default class ProductsManager {
         }
     }
 
-    static async getBy(filtro = {}) {
-        return await Product.findOne(filtro).lean();
+    static async getBy(filter = {}) {
+        try {
+            return await Product.findOne(filter).lean();
+        } catch (error) {
+            throw new Error('Error obteniendo producto: ' + error.message);
+        }
     }
 
     static async create(product) {
-        const { code, title, description, price, category, stock, status, thumbnail } = product;
-    
-        console.log({ code, title, description, price, category, stock, status, thumbnail });
-    
-        if (!code || !title || !price || !category || stock == null) {
-            throw new Error('Todos los campos requeridos deben completarse.');
-        }
-    
         try {
             return await Product.create(product);
         } catch (error) {
@@ -34,10 +30,18 @@ export default class ProductsManager {
     }
 
     static async update(id, product) {
-        return await Product.findByIdAndUpdate(id, product, { new: true }).lean();
+        try {
+            return await Product.findByIdAndUpdate(id, product, { new: true }).lean();
+        } catch (error) {
+            throw new Error('Error actualizando producto: ' + error.message);
+        }
     }
 
     static async delete(id) {
-        return await Product.findByIdAndDelete(id);
+        try {
+            return await Product.findByIdAndDelete(id);
+        } catch (error) {
+            throw new Error('Error eliminando producto: ' + error.message);
+        }
     }
 }
