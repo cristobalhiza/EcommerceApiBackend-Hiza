@@ -1,6 +1,5 @@
-import { usersModel } from "./models/usuarios.model.js";
+import { usersModel } from "./models/user.model.js"
 import { generaHash } from "../utils.js";
-
 
 export class UsuariosManager {
 

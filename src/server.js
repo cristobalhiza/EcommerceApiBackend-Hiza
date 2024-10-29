@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 
 import { __dirname } from './utils.js';
-import { UsuariosManager } from './dao/usuariosManager.js';
+import { UsuariosManager } from './dao/usuarioManager.js';
 import { router as vistasRouter } from './routes/viewsRouter.js';
 import { router as sessionsRouter } from './routes/sessionsRouter.js';
 import { connDB } from './connDB.js';

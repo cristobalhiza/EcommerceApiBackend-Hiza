@@ -2,7 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import passportJWT from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
-import { UsuariosManager } from "../dao/usuariosManager.js";
+import { UsuariosManager } from "../dao/usuarioManager.js";
 import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
 
