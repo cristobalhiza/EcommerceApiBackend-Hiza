@@ -65,19 +65,19 @@ describe("UserService - Validaciones y Casos Límite", () => {
         });
     });
 
-    test("initializeAdminUser crea el usuario admin si no existe", async () => {
+    test("initializeAdmin crea el usuario admin si no existe", async () => {
         UserManager.crearAdminInicial.mockResolvedValue(true);
 
-        const result = await userService.initializeAdminUser();
+        const result = await userService.initializeAdmin();
 
         expect(result).toBe(true);
         expect(UserManager.crearAdminInicial).toHaveBeenCalled();
     });
 
-    test("initializeAdminUser no crea el usuario admin si ya existe", async () => {
+    test("initializeAdmin no crea el usuario admin si ya existe", async () => {
         UserManager.crearAdminInicial.mockResolvedValue(false);
 
-        const result = await userService.initializeAdminUser();
+        const result = await userService.initializeAdmin();
 
         expect(result).toBe(false);
         expect(UserManager.crearAdminInicial).toHaveBeenCalled();

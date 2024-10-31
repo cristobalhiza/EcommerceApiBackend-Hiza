@@ -1,21 +1,20 @@
-// src/controllers/SessionsController.js
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
+import { cartService } from '../services/Cart.service.js';
 
 export class SessionsController {
     static async registro(req, res) {
         try {
+            const newUser = req.user;
 
-            const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) {
-
-                return res.status(409).json({ error: `Ya existe un usuario con email ${req.body.email}` });
+            if (newUser.role === 'user' && req.cookies.cartId) {
+                await cartService.linkCartToUser(req.cookies.cartId, newUser._id);
+                res.clearCookie('cartId');
             }
 
             res.setHeader('Content-Type', 'application/json');
-            return res.status(201).json({ payload: `Registro exitoso para ${req.user.first_name}`, nuevoUsuario: req.user });
+            return res.status(201).json({ payload: `Registro exitoso para ${newUser.first_name}`, nuevoUsuario: newUser });
         } catch (error) {
-
             return res.status(500).json({ error: 'Error en el servidor al registrar el usuario' });
         }
     }
@@ -31,11 +30,17 @@ export class SessionsController {
             config.SECRET,
             { expiresIn: '1h' }
         );
+
+        if (req.user.role === 'user' && req.cookies.cartId) {
+            await cartService.linkCartToUser(req.cookies.cartId, req.user._id);
+            res.clearCookie('cartId');
+        }
+
         res.cookie('tokenCookie', token, { httpOnly: true });
         res.setHeader('Content-Type', 'application/json');
         return res.status(200).json({ payload: `Login exitoso para ${req.user.first_name}`, usuarioLogeado: req.user });
     }
-
+    
     static async current(req, res) {
         if (!req.user) {
             return res.status(401).json({ error: 'No se pudo autenticar el usuario.' });

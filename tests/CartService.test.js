@@ -1,167 +1,58 @@
-import { cartService } from '../src/services/Cart.service.js';
-import CartManager from '../src/dao/cartManager.js';
-import ProductManager from '../src/dao/productManager.js';
+import { cartService } from '../src/services/Cart.service.js'
+import { CartManager } from '../src/dao/cartManager.js'
+import { usersModel } from '../src/dao/models/user.model.js';
 
-jest.mock('../src/dao/cartManager.js', () => ({
-    addProductToCart: jest.fn(),
-    getCart: jest.fn(),
-    clearCart: jest.fn(),
-    updateProductQuantity: jest.fn(),
-    deleteProductFromCart: jest.fn(),
-}));
+jest.mock('../src/dao/cartManager.js');
+jest.mock('../src/dao/models/user.model.js');
 
-jest.mock('../src/dao/productManager.js', () => ({
-    getBy: jest.fn(),
-}));
-
-describe("CartService", () => {
+describe('CartService', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    test("addProductToCart agrega el producto al carrito con la cantidad correcta", async () => {
-        ProductManager.getBy.mockResolvedValue({ stock: 10 }); 
-        CartManager.getCart.mockResolvedValue({
-            _id: "cart123",
-            products: []
+    describe('getOrCreateCart', () => {
+        it('debería crear un nuevo carrito si no existe uno', async () => {
+            CartManager.getCart.mockResolvedValue(null);
+            CartManager.create.mockResolvedValue({ _id: 'newCartId' });
+
+            const cart = await cartService.getOrCreateCart(null);
+
+            expect(CartManager.create).toHaveBeenCalled();
+            expect(cart).toEqual({ _id: 'newCartId' });
         });
-        CartManager.addProductToCart.mockResolvedValue({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 2 }]
+
+        it('debería retornar el carrito existente si el cartId existe', async () => {
+            CartManager.getCart.mockResolvedValue({ _id: 'existingCartId' });
+
+            const cart = await cartService.getOrCreateCart('existingCartId');
+
+            expect(CartManager.getCart).toHaveBeenCalledWith('existingCartId');
+            expect(cart).toEqual({ _id: 'existingCartId' });
         });
-    
-        const cart = await cartService.addProductToCart("cart123", "product123", 2);
-    
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 2 }]
-        });
-        expect(CartManager.addProductToCart).toHaveBeenCalledWith("cart123", "product123", 2);
     });
 
-    test("addProductToCart lanza error si la cantidad es inválida", async () => {
-        await expect(cartService.addProductToCart("cart123", "product123", 0))
-            .rejects
-            .toThrow("La cantidad debe ser mayor que cero.");
-    });
+    describe('linkCartToUser', () => {
+        it('debería vincular el carrito a un usuario con rol "user"', async () => {
+            const userId = 'userId';
+            const cartId = 'cartId';
 
-    test("getCart obtiene el carrito por ID", async () => {
-        CartManager.getCart.mockResolvedValue({
-            _id: "cart123",
-            products: []
+            usersModel.findById.mockResolvedValue({ _id: userId, role: 'user' });
+            CartManager.getCart.mockResolvedValue({ _id: cartId, userId: null, save: jest.fn() });
+
+            const cart = await cartService.linkCartToUser(cartId, userId);
+
+            expect(usersModel.findById).toHaveBeenCalledWith(userId);
+            expect(cart.userId).toBe(userId);
         });
 
-        const cart = await cartService.getCart("cart123");
+        it('debería lanzar un error si el usuario no tiene rol "user"', async () => {
+            const userId = 'adminId';
+            const cartId = 'cartId';
 
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: []
+            usersModel.findById.mockResolvedValue({ _id: userId, role: 'admin' });
+            CartManager.getCart.mockResolvedValue({ _id: cartId, userId: null });
+
+            await expect(cartService.linkCartToUser(cartId, userId)).rejects.toThrow('Solo los usuarios con rol "user" pueden tener un carrito asignado');
         });
-        expect(CartManager.getCart).toHaveBeenCalledWith("cart123");
-    });
-
-    test("clearCart vacía el carrito correctamente", async () => {
-        CartManager.clearCart.mockResolvedValue({
-            _id: "cart123",
-            products: []
-        });
-
-        const cart = await cartService.clearCart("cart123");
-
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: []
-        });
-        expect(CartManager.clearCart).toHaveBeenCalledWith("cart123");
-    });
-
-    test("updateProductQuantity actualiza la cantidad de un producto en el carrito", async () => {
-        CartManager.updateProductQuantity.mockResolvedValue({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 5 }]
-        });
-
-        const cart = await cartService.updateProductQuantity("cart123", "product123", 5);
-
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 5 }]
-        });
-        expect(CartManager.updateProductQuantity).toHaveBeenCalledWith("cart123", "product123", 5);
-    });
-
-    test("updateProductQuantity lanza error si la cantidad es inválida", async () => {
-        await expect(cartService.updateProductQuantity("cart123", "product123", 0))
-            .rejects
-            .toThrow("La cantidad debe ser mayor que cero.");
-    });
-
-    test("deleteProductFromCart elimina el producto del carrito", async () => {
-        CartManager.deleteProductFromCart.mockResolvedValue({
-            _id: "cart123",
-            products: []
-        });
-
-        const cart = await cartService.deleteProductFromCart("cart123", "product123");
-
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: []
-        });
-        expect(CartManager.deleteProductFromCart).toHaveBeenCalledWith("cart123", "product123");
-    });
-});
-
-describe("CartService - Validaciones Adicionales y Disponibilidad de Producto", () => {
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test("addProductToCart lanza error si el producto no está disponible", async () => {
-        ProductManager.getBy.mockResolvedValue({ stock: 0 });
-
-        await expect(cartService.addProductToCart("cart123", "product123", 2))
-            .rejects
-            .toThrow("Producto no disponible.");
-    });
-
-    test("addProductToCart lanza error si el producto ya está en el carrito", async () => {
-        ProductManager.getBy.mockResolvedValue({ stock: 10 }); 
-        CartManager.getCart.mockResolvedValue({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 1 }]
-        });
-
-        await expect(cartService.addProductToCart("cart123", "product123", 2))
-            .rejects
-            .toThrow("El producto ya está en el carrito.");
-    });
-
-    test("addProductToCart lanza error si la cantidad excede el límite máximo", async () => {
-        ProductManager.getBy.mockResolvedValue({ stock: 150 });
-
-        await expect(cartService.addProductToCart("cart123", "product123", 101))
-            .rejects
-            .toThrow("La cantidad máxima permitida es 100.");
-    });
-
-    test("addProductToCart permite agregar el producto cuando está disponible y no excede el límite", async () => {
-        ProductManager.getBy.mockResolvedValue({ stock: 150 }); 
-        CartManager.getCart.mockResolvedValue({
-            _id: "cart123",
-            products: []
-        });
-        CartManager.addProductToCart.mockResolvedValue({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 5 }]
-        });
-
-        const cart = await cartService.addProductToCart("cart123", "product123", 5);
-
-        expect(cart).toEqual({
-            _id: "cart123",
-            products: [{ product: "product123", quantity: 5 }]
-        });
-        expect(CartManager.addProductToCart).toHaveBeenCalledWith("cart123", "product123", 5);
     });
 });

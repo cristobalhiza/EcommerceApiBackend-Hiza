@@ -1,10 +1,35 @@
-import CartManager from '../dao/cartManager.js';
+import { CartManager } from '../dao/cartManager.js';
 import ProductManager from '../dao/productManager.js';
+import { usersModel } from '../dao/models/user.model.js';
 
 class CartService {
     constructor(CartManager, productDAO) {
         this.CartManager = CartManager;
         this.productDAO = productDAO;
+    }
+
+    async getOrCreateCart(cartId) {
+        let cart = cartId ? await this.CartManager.getCart(cartId) : null;
+        if (!cart) {
+            cart = await this.CartManager.create();
+        }
+        return cart;
+    }
+
+    async linkCartToUser(cartId, userId) {
+
+        const user = await usersModel.findById(userId);
+        
+        if (!user || user.role !== 'user') {
+            throw new Error('Solo los usuarios con rol "user" pueden tener un carrito asignado.');
+        }
+
+        const cart = await this.CartManager.getCart(cartId);
+        if (cart && !cart.userId) {
+            cart.userId = userId;
+            await cart.save();
+        }
+        return cart;
     }
 
     async addProductToCart(cartId, productId, quantity) {
@@ -35,10 +60,6 @@ class CartService {
         return await this.CartManager.deleteProductFromCart(cartId, productId);
     }
 
-    async getCart(cartId) {
-        return await this.CartManager.getCart(cartId);
-    }
-
     async getAllCarts() {
         return await this.CartManager.getAllCarts();
     }
@@ -52,10 +73,6 @@ class CartService {
             throw new Error('La cantidad debe ser mayor que cero.');
         }
         return await this.CartManager.updateProductQuantity(cartId, productId, quantity);
-    }
-
-    async createCart() {
-        return await this.CartManager.create();
     }
 
     async updateCart(id, cartData) {

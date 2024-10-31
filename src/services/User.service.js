@@ -46,7 +46,6 @@ class UserService {
             throw new Error("Usuario no encontrado.");
         }
 
-        // Validar la contraseña actual
         const isMatch = await comparaPassword(oldPassword, user.password);
         if (!isMatch) {
             throw new Error("La contraseña actual no es correcta.");
@@ -66,7 +65,7 @@ class UserService {
         return await this.userDAO.getBy(filter);
     }
 
-    async initializeAdminUser() {
+    async initializeAdmin() {
         const adminCreated = await this.userDAO.crearAdminInicial();
         if (adminCreated) {
             console.log("Usuario rol admin creado con éxito.");
