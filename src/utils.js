@@ -28,8 +28,10 @@ export const procesaErrores = (res, error) => {
 }
 
 export const passportCall = (estrategia) => (req, res, next) => {
-    passport.authenticate(estrategia, function (err, user, info, status) {
-        if (err) { return next(err); }
+    passport.authenticate(estrategia, { session: false }, function (err, user, info) {
+        if (err) {
+            return next(err);
+        }
         if (!user) {
             res.setHeader('Content-Type', 'application/json');
             return res.status(401).json({ error: `${info.message ? info.message : info.toString()}` });

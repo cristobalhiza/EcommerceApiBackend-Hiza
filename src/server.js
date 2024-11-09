@@ -5,13 +5,15 @@ import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 
 import { __dirname } from './utils.js';
-import { router as vistasRouter } from './routes/viewsRouter.js';
+import vistasRouter from './routes/viewsRouter.js';
+
 import { router as sessionsRouter } from './routes/sessionsRouter.js';
+import { router as productsRouter} from './routes/apiProducts.router.js';
+import { router as cartsRouter } from './routes/apiCarts.router.js';
 import { connDB } from './connDB.js';
 import { config } from './config/config.js';
-import { checkAuth } from './middleware/checkAuth.js';
 import { iniciarPassport } from './config/passport.config.js';
-import { userService } from './services/User.service.js';
+import { userService } from './repository/User.service.js';
 
 export class Server {
     constructor() {
@@ -32,7 +34,6 @@ export class Server {
         this.app.use(express.static('./src/public'));
         iniciarPassport();
         this.app.use(passport.initialize());
-        this.app.use(checkAuth);
         this.app.use(express.static(path.join(__dirname, '/public')));
     }
 
@@ -48,8 +49,10 @@ export class Server {
     }
 
     routes() {
-        this.app.use('/api/sessions', sessionsRouter);
         this.app.use('/', vistasRouter);
+        this.app.use('/api/products', productsRouter)
+        this.app.use('/api/sessions', sessionsRouter);
+        this.app.use('/api/carts', cartsRouter);
     }
 
     handleErrors() {

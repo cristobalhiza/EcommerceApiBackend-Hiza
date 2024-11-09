@@ -1,4 +1,4 @@
-import { cartService } from '../services/Cart.service.js';
+import { cartService } from '../repository/Cart.service.js';
 
 export const cartMiddleware = async (req, res, next) => {
     let cartId = req.cookies.cartId || req.user?.cartId

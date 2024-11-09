@@ -35,22 +35,6 @@ export class ProductService {
     }
 
     async createProduct(productData) {
-        const { code, title, description, price, category, stock, status, thumbnail, ...rest } = productData;
-
-        if (Object.keys(rest).length > 0) {
-            throw new Error('Todos los campos requeridos deben completarse.');
-        }
-
-        if (!code || !title || !price || !category || stock == null) {
-            throw new Error('Todos los campos requeridos deben completarse.');
-        }
-        if (typeof price !== 'number' || price <= 0) {
-            throw new Error('El precio debe ser un número positivo.');
-        }
-        if (typeof stock !== 'number' || stock < 0 || !Number.isInteger(stock)) {
-            throw new Error('El stock debe ser un número entero no negativo.');
-        }
-
         try {
             return await this.productDAO.create(productData);
         } catch (error) {
@@ -62,19 +46,11 @@ export class ProductService {
     }
 
     async updateProduct(id, productData) {
-        const { stock } = productData;
-
-        if (stock !== undefined && (typeof stock !== 'number' || stock < 0 || !Number.isInteger(stock))) {
-            throw new Error('El stock debe ser un número entero no negativo.');
-        }
-
         try {
             const updatedProduct = await this.productDAO.update(id, productData);
-
             if (!updatedProduct) {
                 throw new Error('Producto no encontrado.');
             }
-
             return updatedProduct;
         } catch (error) {
             throw new Error('Error actualizando producto: ' + error.message);
@@ -83,7 +59,7 @@ export class ProductService {
 
     async deleteProduct(id) {
         try {
-            const deletedProduct = await this.productDAO.delete(id)
+            const deletedProduct = await this.productDAO.delete(id);
             if (!deletedProduct) {
                 throw new Error('Producto no encontrado.');
             }
@@ -93,5 +69,4 @@ export class ProductService {
         }
     }
 }
-
 export const productService = new ProductService(ProductManager);

@@ -1,6 +1,6 @@
 // src/controllers/CartController.js
 
-import { cartService } from '../services/Cart.service.js';
+import { cartService } from '../repository/Cart.service.js';
 import { isValidObjectId } from 'mongoose';
 import { procesaErrores } from '../utils.js';
 
@@ -24,6 +24,9 @@ export class CartController {
             }
 
             const parsedQuantity = parseInt(quantity) || 1;
+            if (parsedQuantity <= 0) {
+                return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+            }
 
             const cart = await cartService.getOrCreateCart();
             const updatedCart = await cartService.addProductToCart(cart._id, pid, parsedQuantity);
@@ -43,8 +46,11 @@ export class CartController {
             }
 
             const parsedQuantity = parseInt(quantity) || 1;
-            const updatedCart = await cartService.addProductToCart(cid, pid, parsedQuantity);
+            if (parsedQuantity <= 0) {
+                return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+            }
 
+            const updatedCart = await cartService.addProductToCart(cid, pid, parsedQuantity);
             res.status(200).json({ message: 'Producto agregado al carrito', cart: updatedCart });
         } catch (error) {
             return procesaErrores(res, error);
@@ -55,11 +61,21 @@ export class CartController {
         try {
             const { cid } = req.params;
             const { products } = req.body;
-
+    
             if (!isValidObjectId(cid)) {
                 return res.status(400).json({ error: 'El ID del carrito no es válido' });
             }
-
+    
+            if (!Array.isArray(products) || products.length === 0) {
+                return res.status(400).json({ error: 'El cuerpo de la solicitud debe incluir un array de productos' });
+            }
+    
+            for (const product of products) {
+                if (!isValidObjectId(product.productId) || typeof product.quantity !== 'number' || product.quantity <= 0) {
+                    return res.status(400).json({ error: 'Cada producto debe tener un ID válido y una cantidad mayor que cero' });
+                }
+            }
+    
             const updatedCart = await cartService.updateCart(cid, { products });
             res.status(200).json({ message: 'Carrito actualizado', cart: updatedCart });
         } catch (error) {
@@ -76,7 +92,12 @@ export class CartController {
                 return res.status(400).json({ error: 'El ID del carrito o producto no es válido' });
             }
 
-            const updatedCart = await cartService.updateProductQuantity(cid, pid, parseInt(quantity));
+            const parsedQuantity = parseInt(quantity);
+            if (parsedQuantity <= 0) {
+                return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+            }
+
+            const updatedCart = await cartService.updateProductQuantity(cid, pid, parsedQuantity);
             res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
         } catch (error) {
             return procesaErrores(res, error);

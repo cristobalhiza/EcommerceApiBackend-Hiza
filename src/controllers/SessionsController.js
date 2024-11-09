@@ -1,20 +1,36 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
-import { cartService } from '../services/Cart.service.js';
+import { cartService } from '../repository/Cart.service.js';
+import { userService } from '../repository/User.service.js';
 
 export class SessionsController {
     static async registro(req, res) {
         try {
-            const newUser = req.user;
-
-            if (newUser.role === 'user' && req.cookies.cartId) {
-                await cartService.linkCartToUser(req.cookies.cartId, newUser._id);
-                res.clearCookie('cartId');
+            const { first_name, email, password, role } = req.body;
+    
+            if (!first_name || !email || !password) {
+                return res.status(400).json({ error: "Todos los campos requeridos deben completarse." });
+            }
+    
+            if (password.length < 8) {
+                return res.status(400).json({ error: "La contraseña debe tener al menos 8 caracteres." });
+            }
+    
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.status(400).json({ error: "El email no tiene un formato válido." });
             }
 
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(201).json({ payload: `Registro exitoso para ${newUser.first_name}`, nuevoUsuario: newUser });
+            const existingUser = await userService.getUserBy({ email });
+            if (existingUser) {
+                return res.status(409).json({ error: `El email ya está en uso: ${email}` }); // 409 Conflict
+            }
+
+            const newUser = await userService.createUser({ first_name, email, password, role });
+    
+            res.status(201).json({ payload: `Registro exitoso para ${newUser.first_name}`, nuevoUsuario: newUser });
         } catch (error) {
+            console.error('Error en el proceso de registro:', error);
             return res.status(500).json({ error: 'Error en el servidor al registrar el usuario' });
         }
     }

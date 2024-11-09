@@ -1,9 +1,11 @@
-import { cartService } from '../src/services/Cart.service.js'
-import { CartManager } from '../src/dao/cartManager.js'
+import { cartService } from '../src/services/Cart.service.js';
+import { CartManager } from '../src/dao/cartManager.js';
 import { usersModel } from '../src/dao/models/user.model.js';
+import ProductManager from '../src/dao/productManager.js';
 
 jest.mock('../src/dao/cartManager.js');
 jest.mock('../src/dao/models/user.model.js');
+jest.mock('../src/dao/productManager.js');
 
 describe('CartService', () => {
     afterEach(() => {
@@ -53,6 +55,47 @@ describe('CartService', () => {
             CartManager.getCart.mockResolvedValue({ _id: cartId, userId: null });
 
             await expect(cartService.linkCartToUser(cartId, userId)).rejects.toThrow('Solo los usuarios con rol "user" pueden tener un carrito asignado');
+        });
+    });
+
+    describe('addProductToCart', () => {
+        it('debería lanzar un error si el producto no tiene stock disponible', async () => {
+            const cartId = 'cartId';
+            const productId = 'productId';
+            const quantity = 5;
+
+            ProductManager.getBy.mockResolvedValue({ _id: productId, stock: 0 });
+            CartManager.getCart.mockResolvedValue({ _id: cartId, products: [] });
+
+            await expect(cartService.addProductToCart(cartId, productId, quantity)).rejects.toThrow('Producto no disponible.');
+        });
+
+        it('debería lanzar un error si la cantidad excede el stock disponible', async () => {
+            const cartId = 'cartId';
+            const productId = 'productId';
+            const quantity = 15;
+
+            ProductManager.getBy.mockResolvedValue({ _id: productId, stock: 10 });
+            CartManager.getCart.mockResolvedValue({ _id: cartId, products: [] });
+
+            await expect(cartService.addProductToCart(cartId, productId, quantity)).rejects.toThrow('La cantidad solicitada excede el stock disponible.');
+        });
+
+        it('debería agregar un producto al carrito si la cantidad es válida y hay stock suficiente', async () => {
+            const cartId = 'cartId';
+            const productId = 'productId';
+            const quantity = 5;
+
+            ProductManager.getBy.mockResolvedValue({ _id: productId, stock: 10 });
+            CartManager.getCart.mockResolvedValue({ _id: cartId, products: [] });
+            CartManager.addProductToCart.mockResolvedValue({ _id: cartId, products: [{ product: productId, quantity }] });
+
+            const updatedCart = await cartService.addProductToCart(cartId, productId, quantity);
+
+            expect(ProductManager.getBy).toHaveBeenCalledWith({ _id: productId });
+            expect(CartManager.getCart).toHaveBeenCalledWith(cartId);
+            expect(CartManager.addProductToCart).toHaveBeenCalledWith(cartId, productId, quantity);
+            expect(updatedCart.products).toContainEqual({ product: productId, quantity });
         });
     });
 });
