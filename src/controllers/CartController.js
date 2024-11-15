@@ -49,9 +49,9 @@ export class CartController {
             return res.status(400).json({ error: 'El ID del carrito o del producto no es válido' });
         }
 
-        const parsedQuantity = parseInt(quantity) || 1;
-        if (parsedQuantity <= 0) {
-            return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+        const parsedQuantity = parseInt(quantity, 10);
+        if (isNaN(parsedQuantity) || parsedQuantity <= 0) {
+            return res.status(400).json({ error: 'La cantidad debe ser un número mayor que cero.' });
         }
         try {
             const cart = await cartService.getCartById(cid)
@@ -59,12 +59,12 @@ export class CartController {
                 return res.status(404).json({ error: 'Carrito no encontrado' });
             }
 
-            const product = await productService.getProductBy(pid);
+            const product = await productService.getProductBy({ _id: pid });
             if (!product) {
                 return res.status(404).json({ error: 'Producto no encontrado' });
             }
 
-            const updatedCart = await cartService.addProductToCart(cid, pid, quantity);
+            const updatedCart = await cartService.addProductToCart(cid, pid, parsedQuantity);
             res.status(200).json({ message: 'Producto agregado al carrito', cart: updatedCart });
         } catch (error) {
             return procesaErrores(res, error);
@@ -203,4 +203,26 @@ export class CartController {
             return procesaErrores(res, error);
         }
     }
+
+    static async purchaseCart(req, res) {
+        const {cid} = req.params
+        if(!isValidObjectId(cid)){
+            res.setHeader('Content-Type','application/json');
+            return res.status(400).json({error:`No existe carrito con id ${cid}`})
+        }
+        if (req.user) {
+            if (req.user.cart != cid) {
+                res.setHeader('Content-Type', 'application/json');
+                return res.status(400).json({ error: `El cart que quiere comprar no pertenece al usuario autenticado` });
+            }
+        } else {
+            const cartIdCookie = req.cookies.cartId;
+            if (!cartIdCookie || cartIdCookie !== cid) {
+                res.setHeader('Content-Type', 'application/json');
+                return res.status(400).json({ error: `El cartId en la presente sessión no coincide con el carrito a comprar` });
+            }
+        }    
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({payload:'Compra realizada con éxito'});
+    } 
 }

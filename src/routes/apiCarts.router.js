@@ -9,11 +9,11 @@ export const router = Router();
 
 router.use(cartMiddleware);
 
-router.post('/', CartController.createEmptyCart);
+router.post('/', CartController.createEmptyCart); 
 
 router.post('/create/product/:pid', CartController.addProductToNewCart);
 
-router.post('/:cid/product/:pid', CartController.addProductToExistingCart);
+router.post('/:cid/product/:pid', passportCall('current'), CartController.addProductToExistingCart);
 
 router.put('/:cid', CartController.updateCart);
 
@@ -26,3 +26,7 @@ router.delete('/:cid', CartController.clearCart);
 router.get('/', passportCall('current'), auth('admin'), CartController.getAllCarts);
 
 router.get('/:cid', CartController.getCartById);
+
+router.post('/:cid/purchase', CartController.purchaseCart )
+
+

@@ -18,7 +18,7 @@ export class ProductService {
         }
     }
 
-    async getProductBy(filter = {}) {
+    async getProductBy(filter) {
         try {
             const product = await this.productDAO.getBy(filter);
 
