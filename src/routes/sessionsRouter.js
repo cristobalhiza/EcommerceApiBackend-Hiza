@@ -18,7 +18,7 @@ router.post(
 
 router.post(
     '/login',
-    passport.authenticate('login', { session: false, failureRedirect: 'api/sessions/error' }),
+    passportCall('login'),
     SessionsController.login
 );
 

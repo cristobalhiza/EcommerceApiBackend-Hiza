@@ -2,9 +2,11 @@ import passport from "passport";
 import local from "passport-local";
 import passportJWT from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
-import { UserManager } from "../dao/userManager.js";
+import { userService } from "../repository/User.service.js";
 import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
+import { cartService } from "../repository/Cart.service.js";
+import { UserManager } from "../dao/userManager.js";
 
 const buscarToken = req => {
     return req.cookies.tokenCookie || null;
@@ -21,18 +23,25 @@ export const iniciarPassport = () => {
             },
             async (req, username, password, done) => {
                 try {
-                    const { first_name } = req.body;
-                    if (!first_name) {
-                        return done(null, false, { message: 'Complete el campo nombre' });
+                    const { first_name:nombre, ...otros } = req.body;
+                    if (!nombre || !username || !password) {
+                        return done(null, false, { message: "Todos los campos requeridos deben completarse." });
                     }
-                    const existe = await UserManager.getBy({ email: username });
+                    if (password.length < 8) {
+                        return done(null, false, { message: "La contraseña debe tener al menos 8 caracteres." });
+                    }
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(username)) {
+                        return done(null, false, { message: "El email no tiene un formato válido." });
+                    }
+                    const existe = await userService.getUserBy({username})
                     if (existe) {
                         return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
                     password = generaHash(password);
 
                     const nuevoUsuario = await UserManager.create({
-                        first_name,
+                        first_name: nombre,
                         email: username,
                         password,
                     });

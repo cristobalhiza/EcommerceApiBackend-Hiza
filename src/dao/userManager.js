@@ -7,7 +7,7 @@ export class UserManager {
         return nuevoUsuario.toJSON();
     }
 
-    static async getBy(filtro = {}) {
+    static async getBy(filtro) {
         return await usersModel.findOne(filtro).lean();
     }
 

@@ -1,67 +1,19 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
-import { cartService } from '../repository/Cart.service.js';
-import { userService } from '../repository/User.service.js';
 
 export class SessionsController {
     static async registro(req, res) {
-        try {
-            const { first_name, email, password, role } = req.body;
-    
-            if (!first_name || !email || !password) {
-                return res.status(400).json({ error: "Todos los campos requeridos deben completarse." });
-            }
-    
-            if (password.length < 8) {
-                return res.status(400).json({ error: "La contraseña debe tener al menos 8 caracteres." });
-            }
-    
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                return res.status(400).json({ error: "El email no tiene un formato válido." });
-            }
-
-            const existingUser = await userService.getUserBy({ email });
-            if (existingUser) {
-                return res.status(409).json({ error: `El email ya está en uso: ${email}` }); // 409 Conflict
-            }
-
-            const newUser = await userService.createUser({ first_name, email, password, role });
-    
-            res.status(201).json({ payload: `Registro exitoso para ${newUser.first_name}`, nuevoUsuario: newUser });
-        } catch (error) {
-            console.error('Error en el proceso de registro:', error);
-            return res.status(500).json({ error: 'Error en el servidor al registrar el usuario' });
-        }
+        res.setHeader('Content-Type', 'application/json');
+        res.status(201).json({ message: "Registro exitoso", nuevoUsuario: req.user });
     }
 
     static async login(req, res) {
-        const token = jwt.sign(
-            {
-                id: req.user._id,
-                email: req.user.email,
-                role: req.user.role,
-                first_name: req.user.first_name
-            },
-            config.SECRET,
-            { expiresIn: '1h' }
-        );
-
-        if (req.user.role === 'user' && req.cookies.cartId) {
-            await cartService.linkCartToUser(req.cookies.cartId, req.user._id);
-            res.clearCookie('cartId');
-        }
-
-        res.cookie('tokenCookie', token, { httpOnly: true });
+        const token = jwt.sign({ id: req.user._id, email: req.user.email }, config.SECRET, { expiresIn: '1h' });
         res.setHeader('Content-Type', 'application/json');
-        return res.status(200).json({ payload: `Login exitoso para ${req.user.first_name}`, usuarioLogeado: req.user });
+        res.status(200).json({ message: "Login exitoso", usuario: req.user, token });
     }
-    
-    static async current(req, res) {
-        if (!req.user) {
-            return res.status(401).json({ error: 'No se pudo autenticar el usuario.' });
-        }
 
+    static async current(req, res) {
         res.status(200).json({
             id: req.user._id,
             first_name: req.user.first_name,
@@ -72,7 +24,6 @@ export class SessionsController {
 
     static async logout(req, res) {
         res.clearCookie('tokenCookie');
-
         const { web } = req.query;
         if (web) {
             return res.redirect(`/login?mensaje=¡Logout exitoso!`);

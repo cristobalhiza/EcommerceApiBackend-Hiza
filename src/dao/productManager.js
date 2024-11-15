@@ -10,9 +10,9 @@ export default class ProductManager {
         }
     }
 
-    static async getBy(filter = {}) {
+    static async getBy(filter) {
         try {
-            return await Product.findOne(filter).lean();
+            return await Product.findOne(filter = {}).lean();
         } catch (error) {
             throw new Error('Error obteniendo producto: ' + error.message);
         }

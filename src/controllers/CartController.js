@@ -1,5 +1,5 @@
 // src/controllers/CartController.js
-
+import { productService } from '../repository/Product.service.js';
 import { cartService } from '../repository/Cart.service.js';
 import { isValidObjectId } from 'mongoose';
 import { procesaErrores } from '../utils.js';
@@ -15,19 +15,23 @@ export class CartController {
     }
 
     static async addProductToNewCart(req, res) {
+        const { pid } = req.params;
+        const { quantity } = req.body;
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ error: 'El ID del producto no es válido' });
+        }
+
+        const parsedQuantity = parseInt(quantity) || 1;
+        if (parsedQuantity <= 0) {
+            return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+        }
+
+        const product = await productService.getProductBy({ pid });
+        if (!product) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
         try {
-            const { pid } = req.params;
-            const { quantity } = req.body;
-
-            if (!isValidObjectId(pid)) {
-                return res.status(400).json({ error: 'El ID del producto no es válido' });
-            }
-
-            const parsedQuantity = parseInt(quantity) || 1;
-            if (parsedQuantity <= 0) {
-                return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
-            }
-
             const cart = await cartService.getOrCreateCart();
             const updatedCart = await cartService.addProductToCart(cart._id, pid, parsedQuantity);
             res.status(201).json({ message: 'Producto agregado al nuevo carrito', cart: updatedCart });
@@ -37,20 +41,30 @@ export class CartController {
     }
 
     static async addProductToExistingCart(req, res) {
+
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+
+        if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
+            return res.status(400).json({ error: 'El ID del carrito o del producto no es válido' });
+        }
+
+        const parsedQuantity = parseInt(quantity) || 1;
+        if (parsedQuantity <= 0) {
+            return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+        }
         try {
-            const { cid, pid } = req.params;
-            const { quantity } = req.body;
-
-            if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
-                return res.status(400).json({ error: 'El ID del carrito o del producto no es válido' });
+            const cart = await cartService.getCartById(cid)
+            if (!cart) {
+                return res.status(404).json({ error: 'Carrito no encontrado' });
             }
 
-            const parsedQuantity = parseInt(quantity) || 1;
-            if (parsedQuantity <= 0) {
-                return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
+            const product = await productService.getProductBy(pid);
+            if (!product) {
+                return res.status(404).json({ error: 'Producto no encontrado' });
             }
 
-            const updatedCart = await cartService.addProductToCart(cid, pid, parsedQuantity);
+            const updatedCart = await cartService.addProductToCart(cid, pid, quantity);
             res.status(200).json({ message: 'Producto agregado al carrito', cart: updatedCart });
         } catch (error) {
             return procesaErrores(res, error);
@@ -61,22 +75,36 @@ export class CartController {
         try {
             const { cid } = req.params;
             const { products } = req.body;
-    
+
             if (!isValidObjectId(cid)) {
                 return res.status(400).json({ error: 'El ID del carrito no es válido' });
             }
-    
+
             if (!Array.isArray(products) || products.length === 0) {
                 return res.status(400).json({ error: 'El cuerpo de la solicitud debe incluir un array de productos' });
             }
-    
-            for (const product of products) {
-                if (!isValidObjectId(product.productId) || typeof product.quantity !== 'number' || product.quantity <= 0) {
-                    return res.status(400).json({ error: 'Cada producto debe tener un ID válido y una cantidad mayor que cero' });
-                }
+
+            const validProducts = await Promise.all(
+                products.map(async (product) => {
+                    if (!isValidObjectId(product.productId) || typeof product.quantity !== 'number' || product.quantity <= 0) {
+                        return null;
+                    }
+
+                    const existingProduct = await productService.getProductById(product.productId);
+                    if (!existingProduct) {
+                        return null;
+                    }
+
+                    return product;
+                })
+            );
+            const filteredProducts = validProducts.filter(product => product !== null);
+
+            if (filteredProducts.length === 0) {
+                return res.status(400).json({ error: 'Todos los productos son inválidos o no existen' });
             }
-    
-            const updatedCart = await cartService.updateCart(cid, { products });
+
+            const updatedCart = await cartService.updateCart(cid, { products: filteredProducts });
             res.status(200).json({ message: 'Carrito actualizado', cart: updatedCart });
         } catch (error) {
             return procesaErrores(res, error);
@@ -97,6 +125,16 @@ export class CartController {
                 return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
             }
 
+            const cart = await cartService.getCartById(cid)
+            if (!cart) {
+                return res.status(404).json({ error: 'Carrito no encontrado' });
+            }
+
+            const product = await productService.getProductBy({ pid });
+            if (!product) {
+                return res.status(404).json({ error: 'Producto no encontrado' });
+            }
+
             const updatedCart = await cartService.updateProductQuantity(cid, pid, parsedQuantity);
             res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
         } catch (error) {
@@ -110,6 +148,14 @@ export class CartController {
 
             if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
                 return res.status(400).json({ error: 'El ID del carrito o producto no es válido' });
+            }
+            const cart = await cartService.getCartById(cid);
+            if (!cart) {
+                return res.status(404).json({ error: 'Carrito no encontrado' });
+            }    
+            const productIndex = cart.products.findIndex(item => item.product._id.toString() === pid.toString());
+            if (productIndex === -1) {
+                return res.status(404).json({ error: 'El producto no se encuentra en el carrito' });
             }
 
             const updatedCart = await cartService.deleteProductFromCart(cid, pid);

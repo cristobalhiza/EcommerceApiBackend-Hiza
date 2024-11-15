@@ -1,11 +1,17 @@
 import { CartManager } from '../dao/cartManager.js';
 import ProductManager from '../dao/productManager.js';
 import { usersModel } from '../dao/models/user.model.js';
+import Cart from '../dao/models/cart.model.js';
 
 class CartService {
     constructor(CartManager, productDAO) {
         this.CartManager = CartManager;
         this.productDAO = productDAO;
+    }
+
+    async getCartById(cartId) {
+        const cart = await Cart.findById(cartId).populate('products.product');
+        return cart;
     }
 
     async getOrCreateCart(cartId) {
@@ -31,21 +37,8 @@ class CartService {
     }
 
     async addProductToCart(cartId, productId, quantity) {
-        const product = await this.productDAO.getBy({ _id: productId });
-        if (!product || product.stock <= 0) {
-            throw new Error('Producto no disponible.');
-        }
-    
-        if (quantity > product.stock) {
-            throw new Error('La cantidad solicitada excede el stock disponible.');
-        }
     
         const cart = await this.CartManager.getCart(cartId);
-        const existingProduct = cart.products.find(p => p.product.toString() === productId);
-    
-        if (existingProduct) {
-            throw new Error('El producto ya está en el carrito.');
-        }
     
         return await this.CartManager.addProductToCart(cartId, productId, quantity);
     }
