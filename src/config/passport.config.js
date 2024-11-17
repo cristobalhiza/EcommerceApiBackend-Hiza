@@ -5,8 +5,8 @@ import GitHubStrategy from 'passport-github2'
 import { userService } from "../repository/User.service.js";
 import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
-import { cartService } from "../repository/Cart.service.js";
 import { UserManager } from "../dao/userManager.js";
+import { cartService } from "../repository/Cart.service.js";
 
 const buscarToken = req => {
     return req.cookies.tokenCookie || null;
@@ -23,7 +23,7 @@ export const iniciarPassport = () => {
             },
             async (req, username, password, done) => {
                 try {
-                    const { first_name:nombre, ...otros } = req.body;
+                    const { first_name: nombre, ...otros } = req.body;
                     if (!nombre || !username || !password) {
                         return done(null, false, { message: "Todos los campos requeridos deben completarse." });
                     }
@@ -34,19 +34,21 @@ export const iniciarPassport = () => {
                     if (!emailRegex.test(username)) {
                         return done(null, false, { message: "El email no tiene un formato válido." });
                     }
-                    const existe = await userService.getUserBy({username})
+                    const existe = await userService.getUserBy({ email: username })
                     if (existe) {
                         return done(null, false, { message: `Ya existe un usuario con email ${username}` });
                     }
-                    password = generaHash(password);
+                    const hashedPassword = generaHash(password);
 
+                    let carritoNuevo = await cartService.createCart()
                     const nuevoUsuario = await UserManager.create({
                         first_name: nombre,
+                        ...otros,
                         email: username,
-                        password,
+                        password: hashedPassword,
+                        cart: carritoNuevo
                     });
                     return done(null, nuevoUsuario);
-
                 } catch (error) {
                     console.error('Error durante el registro:', error);
                     return done(error); //segundo argumento de done es el usuario
@@ -64,11 +66,12 @@ export const iniciarPassport = () => {
                 try {
                     const usuario = await UserManager.getBy({ email: username })
                     if (!usuario) {
-                        return done(null, false)
+                        return done(null, false, { message: "Credenciales inválidas" });
                     }
                     if (!comparaPassword(password, usuario.password)) {
-                        return done(null, false)
+                        return done(null, false, { message: "Credenciales inválidas." });
                     }
+
                     delete usuario.password
                     return done(null, usuario)
                 } catch (error) {
@@ -119,12 +122,13 @@ passport.use('current',
         },
         async (usuario, done) => {
             try {
-                if (usuario)
-                    return done(null, usuario)
-                else {
-                    return done(null, false)
+                if (usuario && usuario.cart) {
+                    return done(null, usuario);
+                } else {
+                    return done(null, false, { message: "Carrito no encontrado en el token JWT." });
                 }
-            } catch (Error) {
+            } catch (error) {
+                console.error("Error en estrategia JWT:", error);
                 return done(error)
             }
         }

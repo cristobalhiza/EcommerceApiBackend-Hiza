@@ -2,9 +2,9 @@ import Product from './models/product.model.js'
 
 export default class ProductManager {
 
-    static async get(page = 1, limit = 10) {
+    static async get(filter = {}, options = {}) {
         try {
-            return await Product.paginate({}, { lean: true, page, limit });
+            return await Product.paginate(filter, { lean: true, ...options });
         } catch (error) {
             throw new Error('Error obteniendo productos: ' + error.message);
         }
@@ -12,7 +12,7 @@ export default class ProductManager {
 
     static async getBy(filter) {
         try {
-            return await Product.findOne(filter = {}).lean();
+            return await Product.findOne(filter).lean(); 
         } catch (error) {
             throw new Error('Error obteniendo producto: ' + error.message);
         }
@@ -29,9 +29,9 @@ export default class ProductManager {
         }
     }
 
-    static async update(id, product) {
+    static async update(productId, data) {
         try {
-            return await Product.findByIdAndUpdate(id, product, { new: true }).lean();
+            return await Product.findByIdAndUpdate(productId, data, { new: true }).lean();
         } catch (error) {
             throw new Error('Error actualizando producto: ' + error.message);
         }

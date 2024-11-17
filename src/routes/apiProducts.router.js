@@ -6,9 +6,11 @@ import { passportCall } from '../utils.js';
 
 export const router = Router();
 
+router.use(passportCall('current'));
+
 router.get('/', ProductsController.getProducts);
 router.get('/:id', ProductsController.getProductById);
-router.post('/', passportCall('current'), auth('admin'), ProductsController.createProduct);
-router.put('/:id', passportCall('current'), auth('admin'), ProductsController.updateProduct);
-router.delete('/:id', passportCall('current'), auth('admin'), ProductsController.deleteProduct);
+router.post('/', auth('admin'), ProductsController.createProduct);
+router.put('/:id', auth('admin'), ProductsController.updateProduct);
+router.delete('/:id', auth('admin'), ProductsController.deleteProduct);
 

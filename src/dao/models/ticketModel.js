@@ -1,17 +1,29 @@
 import mongoose from "mongoose";
 
-export const ticketModel=mongoose.model(
-    "tickets", 
-    new mongoose.Schema(
-        {
-            nroComp: String, 
-            fecha: Date, 
-            email_comprador: String,
-            total: Number, 
-            detalle:{
-                type:[]
-            }
+const ticketSchema = new mongoose.Schema(
+    {
+        code: {
+            type: String,
+            unique: true,
         },
-        {timestamps:true}
-    )
-)
+        purchase_datetime: {
+            type: Date,
+            default: Date.now,
+        },
+        purchaser: {
+            type: String,
+            required: true, 
+        },
+        amount: {
+            type: Number,
+            required: true,
+        },
+        detalle: {
+            type: Array,
+            default: [], 
+        },
+    },
+    { timestamps: true } 
+);
+
+export const ticketModel = mongoose.model("tickets", ticketSchema);

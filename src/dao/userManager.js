@@ -7,7 +7,7 @@ export class UserManager {
         return nuevoUsuario.toJSON();
     }
 
-    static async getBy(filtro) {
+    static async getBy(filtro={}) {
         return await usersModel.findOne(filtro).lean();
     }
 
@@ -24,5 +24,14 @@ export class UserManager {
             return true;
         }
         return false; 
+    }
+
+    static async update(userId, data){
+        try {
+            return await usersModel.findByIdAndUpdate(userId, data, { new: true });
+        } catch (error) {
+            console.error('Error al actualizar usuario:', error);
+            throw error;
+        }
     }
 }

@@ -8,17 +8,7 @@ class UserService {
     }
 
     async createUser(userData) {
-        const { email, password } = userData;
-    
-        const existingUser = await this.userDAO.getBy({ email });
-        if (existingUser) {
-            throw new Error("El email ya está en uso. Use un email diferente.");
-        }
-    
-        const hashedPassword = await generaHash(password);
-        const userToCreate = { ...userData, password: hashedPassword };
-    
-        return await this.userDAO.create(userToCreate);
+        return await this.userDAO.create(userData);
     }
     
     async updatePassword(userId, oldPassword, newPassword) {
@@ -48,6 +38,9 @@ class UserService {
             console.log("El usuario rol admin ya existe.");
         }
         return adminCreated;
+    }
+    async updateUser(userId, data) {
+        return await this.userDAO.update(userId, data);
     }
 }
 

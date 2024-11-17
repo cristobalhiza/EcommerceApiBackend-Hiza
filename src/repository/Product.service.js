@@ -2,31 +2,23 @@ import ProductManager from "../dao/productManager.js";
 
 export class ProductService {
     constructor(DAO) {
-        this.productDAO = DAO;
+        this.ProductManager = DAO;
     }
 
-    async getProducts(page = 1, limit = 10) {
+    async getProducts(filter = {}, options = {}) {
         try {
-            const products = await this.productDAO.get(page, limit);
-
-            return products.docs.map(product => ({
-                ...product,
-                available: product.stock > 0
-            }));
+            return await this.ProductManager.get(filter, options);
         } catch (error) {
             throw new Error('Error obteniendo productos: ' + error.message);
         }
     }
 
-    async getProductBy(filter) {
+    async getProductBy(filter = {}) {
         try {
-            const product = await this.productDAO.getBy(filter);
+            const product = await this.ProductManager.getBy(filter);
 
             if (product) {
-                return {
-                    ...product,
-                    available: product.stock > 0
-                };
+                return product; 
             }
             return null;
         } catch (error) {
@@ -36,7 +28,7 @@ export class ProductService {
 
     async createProduct(productData) {
         try {
-            return await this.productDAO.create(productData);
+            return await this.ProductManager.create(productData);
         } catch (error) {
             if (error.code === 11000 && error.keyPattern && error.keyPattern.code) {
                 throw new Error('El código del producto ya existe, elija uno único.');
@@ -47,9 +39,12 @@ export class ProductService {
 
     async updateProduct(id, productData) {
         try {
-            const updatedProduct = await this.productDAO.update(id, productData);
+            const updatedProduct = await this.ProductManager.update(id, productData);
             if (!updatedProduct) {
                 throw new Error('Producto no encontrado.');
+            }
+            if (updatedProduct.stock < 0) {
+                throw new Error('El stock del producto no puede ser negativo.');
             }
             return updatedProduct;
         } catch (error) {
@@ -59,7 +54,7 @@ export class ProductService {
 
     async deleteProduct(id) {
         try {
-            const deletedProduct = await this.productDAO.delete(id);
+            const deletedProduct = await this.ProductManager.delete(id);
             if (!deletedProduct) {
                 throw new Error('Producto no encontrado.');
             }

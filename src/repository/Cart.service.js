@@ -1,67 +1,65 @@
 import { CartManager } from '../dao/cartManager.js';
 import ProductManager from '../dao/productManager.js';
-import { usersModel } from '../dao/models/user.model.js';
-import Cart from '../dao/models/cart.model.js';
 
 class CartService {
-    constructor(CartManager, productDAO) {
-        this.CartManager = CartManager;
-        this.productDAO = productDAO;
-    }
-
     async getCartById(cartId) {
-        const cart = await Cart.findById(cartId).populate('products.product');
-        return cart;
+        return await CartManager.getCart(cartId);
     }
 
-    async getOrCreateCart(cartId) {
-        let cart = cartId ? await this.CartManager.getCart(cartId) : null;
-        if (!cart) {
-            cart = await this.CartManager.create();
-        }
-        return cart;
-    }
-
-    async linkCartToUser(cartId, userId) {
-        const user = await usersModel.findById(userId);
-        if (!user || user.role !== 'user') {
-            throw new Error('Solo los usuarios con rol "user" pueden tener un carrito asignado.');
-        }
-
-        const cart = await this.CartManager.getCart(cartId);
-        if (cart && !cart.userId) {
-            cart.userId = userId;
-            await cart.save();
-        }
-        return cart;
-    }
-
-    async addProductToCart(cartId, productId, quantity) {
+    async addProductToCart(cart, product, quantity) {
+        const existingProduct = cart.products.find(item => item.product.toString() === product._id.toString());
     
-        const cart = await this.CartManager.getCart(cartId);
+        const totalQuantity = existingProduct ? existingProduct.quantity + quantity : quantity;
+        if (product.stock < totalQuantity) {
+            throw new Error('La cantidad total en el carrito excede el stock disponible.');
+        }
     
-        return await this.CartManager.addProductToCart(cartId, productId, quantity);
+        if (existingProduct) {
+            existingProduct.quantity += quantity;
+        } else {
+            cart.products.push({ product: product._id, quantity });
+        }
+    
+        product.stock -= quantity;
+        await ProductManager.update(product._id, { stock: product.stock });
+    
+        await cart.save(); 
+        return cart;
     }
 
     async deleteProductFromCart(cartId, productId) {
-        return await this.CartManager.deleteProductFromCart(cartId, productId);
+        return await CartManager.deleteProductFromCart(cartId, productId);
     }
 
     async getAllCarts() {
-        return await this.CartManager.getAllCarts();
+        return await CartManager.getAllCarts();
     }
 
     async clearCart(cartId) {
-        return await this.CartManager.clearCart(cartId);
+        return await CartManager.clearCart(cartId);
     }
 
     async updateProductQuantity(cartId, productId, quantity) {
-        return await this.CartManager.updateProductQuantity(cartId, productId, quantity);
+        const cart = await CartManager.getCart(cartId);
+        const productInCart = cart.products.find(p => p.product.equals(mongoose.Types.ObjectId(productId)));
+
+        if (!productInCart) {
+            throw new Error('Producto no encontrado en el carrito.');
+        }
+
+        productInCart.quantity = quantity;
+        await cart.save();
+
+        return cart;
     }
 
-    async updateCart(id, cartData) {
-        return await this.CartManager.update(id, cartData);
+    async updateCart(filtro={}, cartData) {
+        return await CartManager.update(filtro, cartData);
+    }
+
+    async createCart() {
+        return await CartManager.create();
     }
 }
 
-export const cartService = new CartService(CartManager, ProductManager);
+export const cartService = new CartService();

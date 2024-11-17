@@ -2,7 +2,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bcrypt from 'bcrypt'
 import passport from 'passport';
-
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
@@ -34,9 +34,15 @@ export const passportCall = (estrategia) => (req, res, next) => {
         }
         if (!user) {
             res.setHeader('Content-Type', 'application/json');
-            return res.status(401).json({ error: `${info.message ? info.message : info.toString()}` });
+            return res.status(401).json({ error: info?.message || "No autorizado." });
         }
         req.user = user;
         return next();
     })(req, res, next);
 }
+
+export const validateObjectId = (id, componente) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new Error(`El ID de ${componente} no es válido.`);
+    }
+};

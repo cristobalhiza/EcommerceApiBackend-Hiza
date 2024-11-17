@@ -1,32 +1,27 @@
 // src/routes/apiCarts.router.js
 import { Router } from 'express';
 import { CartController } from '../controllers/CartController.js';
-import { cartMiddleware } from '../middleware/cartMiddleware.js';
 import { auth } from '../middleware/auth.js';
 import { passportCall } from '../utils.js';
 
 export const router = Router();
 
-router.use(cartMiddleware);
-
 router.post('/', CartController.createEmptyCart); 
 
-router.post('/create/product/:pid', CartController.addProductToNewCart);
+router.get('/:cid',passportCall('current'), CartController.getCartById);
 
 router.post('/:cid/product/:pid', passportCall('current'), CartController.addProductToExistingCart);
 
-router.put('/:cid', CartController.updateCart);
+router.post('/:cid/purchase', passportCall('current'), CartController.purchaseCart)
 
-router.put('/:cid/product/:pid', CartController.updateProductQuantity);
+router.delete('/:cid/product/:pid',passportCall('current'), CartController.deleteProductFromCart);
 
-router.delete('/:cid/product/:pid', CartController.deleteProductFromCart);
-
-router.delete('/:cid', CartController.clearCart);
+router.delete('/',passportCall('current'), CartController.clearCart);
 
 router.get('/', passportCall('current'), auth('admin'), CartController.getAllCarts);
 
-router.get('/:cid', CartController.getCartById);
+router.put('/:cid',passportCall('current'), CartController.updateCart);
 
-router.post('/:cid/purchase', CartController.purchaseCart )
+router.put('/:cid/product/:pid',passportCall('current'), CartController.updateProductQuantity);
 
 

@@ -8,15 +8,20 @@ class ProductsController {
         try {
             const { category, limit = 10, page = 1, sort } = req.query;
 
-            let filter = {};
-            if (category) {
-                filter.category = { $regex: new RegExp(category, 'i') };
+            const parsedLimit = parseInt(limit, 10);
+            const parsedPage = parseInt(page, 10);
+            if (isNaN(parsedLimit) || parsedLimit <= 0) {
+                return res.status(400).json({ error: "El límite debe ser un número mayor a 0." });
+            }
+            if (isNaN(parsedPage) || parsedPage <= 0) {
+                return res.status(400).json({ error: "La página debe ser un número mayor a 0." });
             }
 
+            const filter = category ? { category: { $regex: new RegExp(category, 'i') } } : {};
             const options = {
-                limit: parseInt(limit),
-                page: parseInt(page),
-                sort: sort ? { price: sort === 'asc' ? 1 : -1 } : {}
+                limit: parsedLimit,
+                page: parsedPage,
+                sort: sort ? { price: sort === 'asc' ? 1 : -1 } : {},
             };
 
             const result = await productService.getProducts(filter, options);
@@ -29,7 +34,7 @@ class ProductsController {
                 hasNextPage: result.hasNextPage,
                 prevPage: result.prevPage,
                 nextPage: result.nextPage,
-                limit: parseInt(limit),
+                limit: parsedLimit,
             });
         } catch (error) {
             return procesaErrores(res, error);

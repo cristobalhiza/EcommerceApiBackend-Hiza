@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
+import UsersDTO from '../DTO/UsersDTO.js';
 
 export class SessionsController {
     static async registro(req, res) {
@@ -8,9 +9,27 @@ export class SessionsController {
     }
 
     static async login(req, res) {
-        const token = jwt.sign({ id: req.user._id, email: req.user.email }, config.SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            {
+            id: req.user._id,
+            email: req.user.email,
+            first_name: req.user.first_name,
+            role: req.user.role,             
+            cart: req.user.cart             
+        }, 
+        config.SECRET, { expiresIn: '1h' });
+
+        const userDTO = new UsersDTO(req.user); 
+
+        res.cookie('tokenCookie', token, {
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'Strict', 
+            maxAge: 3600000 * 4 
+        });
+
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).json({ message: "Login exitoso", usuario: req.user, token });
+        res.status(200).json({ message: "Login exitoso", usuario: userDTO, token });
     }
 
     static async current(req, res) {
@@ -18,7 +37,8 @@ export class SessionsController {
             id: req.user._id,
             first_name: req.user.first_name,
             email: req.user.email,
-            role: req.user.role
+            role: req.user.role,
+            cart: req.user.cart,
         });
     }
 
