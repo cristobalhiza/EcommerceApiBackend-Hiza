@@ -6,7 +6,9 @@ import { procesaErrores } from '../utils.js';
 
 class ViewsController {
     renderHome(req, res) {
-        res.status(200).render('home');
+        res.status(200).render('home', {
+            isLogin: !!req.cookies.tokenCookie
+        });
     }
 
     renderRegistro(req, res) {
@@ -19,9 +21,11 @@ class ViewsController {
 
     renderCurrent(req, res) {
         res.status(200).render('current', {
-            user: req.user
+            user: req.user,
+            isLogin: !!req.user
         });
     }
+    
 
     async renderCart(req, res) {
         try {

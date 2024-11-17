@@ -63,20 +63,25 @@ class ProductsController {
     async createProduct(req, res) {
         try {
             const { code, title, price, category, stock, status, description, thumbnail } = req.body;
-
+    
             if (!code || !title || !price || !category || stock == null) {
                 return res.status(400).json({ error: 'Faltan campos obligatorios (code, title, price, category, stock)' });
             }
-
+    
             if (typeof price !== 'number' || price <= 0) {
                 return res.status(400).json({ error: 'El precio debe ser un número positivo.' });
             }
             if (typeof stock !== 'number' || stock < 0 || !Number.isInteger(stock)) {
                 return res.status(400).json({ error: 'El stock debe ser un número entero no negativo.' });
             }
-
-            const product = await productService.createProduct({ code, title, price, category, stock, status, description, thumbnail });
-            res.status(201).json(product);
+    
+            const result = await productService.createProduct({ code, title, price, category, stock, status, description, thumbnail });
+    
+            if (result.error) {
+                return res.status(400).json({ error: result.message });
+            }
+    
+            res.status(201).json(result);
         } catch (error) {
             return procesaErrores(res, error);
         }

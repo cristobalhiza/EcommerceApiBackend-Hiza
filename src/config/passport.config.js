@@ -7,6 +7,7 @@ import { comparaPassword, generaHash } from "../utils.js";
 import { config } from "./config.js";
 import { UserManager } from "../dao/userManager.js";
 import { cartService } from "../repository/Cart.service.js";
+import UsersDTO from "../DTO/UsersDTO.js";
 
 const buscarToken = req => {
     return req.cookies.tokenCookie || null;
@@ -88,7 +89,7 @@ export const iniciarPassport = () => {
     passport.use(new GitHubStrategy({
         clientID: config.GITHUB_CLIENT_ID,
         clientSecret: config.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/api/sessions/github/callback",
+        callbackURL: "http://localhost:8080/api/sessions/github/callback",
     },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -118,20 +119,18 @@ passport.use('current',
     new passportJWT.Strategy(
         {
             secretOrKey: config.SECRET,
-            jwtFromRequest: new passportJWT.ExtractJwt.fromExtractors([buscarToken]),
+            jwtFromRequest: passportJWT.ExtractJwt.fromExtractors([buscarToken]),
         },
         async (usuario, done) => {
             try {
-                if (usuario && usuario.cart) {
+                if (usuario) {
                     return done(null, usuario);
-                } else {
-                    return done(null, false, { message: "Carrito no encontrado en el token JWT." });
                 }
+                return done(null, false, { message: "Usuario no autenticado o inválido." });
             } catch (error) {
                 console.error("Error en estrategia JWT:", error);
-                return done(error)
+                return done(error, false);
             }
         }
-
     )
-)
+);

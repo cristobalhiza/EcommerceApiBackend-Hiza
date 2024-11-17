@@ -30,8 +30,8 @@ export class ProductService {
         try {
             return await this.ProductManager.create(productData);
         } catch (error) {
-            if (error.code === 11000 && error.keyPattern && error.keyPattern.code) {
-                throw new Error('El código del producto ya existe, elija uno único.');
+            if (error.code === 11000 && error.keyPattern?.code) {
+                return { error: true, message: 'El código del producto ya existe, elija uno único.' };
             }
             throw new Error('Error creando producto: ' + error.message);
         }

@@ -35,6 +35,10 @@ export class Server {
         iniciarPassport();
         this.app.use(passport.initialize());
         this.app.use(express.static(path.join(__dirname, '/public')));
+        this.app.use((req, res, next) => {
+            res.locals.isLogin = !!req.cookies.tokenCookie;
+            next();
+        });
     }
 
     templateEngine() {

@@ -1,3 +1,4 @@
+//src\public\js\registro.js
 const inputNombre = document.getElementById('first_name');
 const inputEmail = document.getElementById('email');
 const inputPassword = document.getElementById('password');

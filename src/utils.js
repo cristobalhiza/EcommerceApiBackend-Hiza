@@ -17,29 +17,29 @@ export const comparaPassword = (password, hash) => {
 };
 
 export const procesaErrores = (res, error) => {
-    console.log(error);
+    console.error('Error en el servidor:', error);
     res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json(
-        {
-            error: `Error inesperado en el servidor - Intente más tarde, o contacte a su administrador`,
-            // detalle:`${error.message}`
-        }
-    )
-}
+    return res.status(500).json({
+        error: 'Error inesperado en el servidor. Por favor, intente más tarde.',
+        ...(process.env.NODE_ENV !== 'production' && { detalle: error.message })
+    });
+};
 
 export const passportCall = (estrategia) => (req, res, next) => {
     passport.authenticate(estrategia, { session: false }, function (err, user, info) {
         if (err) {
-            return next(err);
-        }
+            console.error('Error en Passport:', err);
+            return res.status(500).json({ error: 'Error inesperado en autenticación.' });        }
         if (!user) {
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(401).json({ error: info?.message || "No autorizado." });
+            return res.status(401).json({
+                error: info?.message || 'Usuario no autorizado. Verifica tus credenciales.',
+            });
         }
+
         req.user = user;
-        return next();
+        next();
     })(req, res, next);
-}
+};
 
 export const validateObjectId = (id, componente) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {

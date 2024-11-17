@@ -33,13 +33,30 @@ export class SessionsController {
     }
 
     static async current(req, res) {
-        res.status(200).json({
-            id: req.user._id,
-            first_name: req.user.first_name,
-            email: req.user.email,
-            role: req.user.role,
-            cart: req.user.cart,
-        });
+        try {
+            if (!req.user) {
+                return res.status(401).json({ error: "Usuario no autenticado." });
+            }
+    
+            const response = {
+                id: req.user.id,
+                email: req.user.email,
+                first_name: req.user.first_name,
+                role: req.user.role,
+            };
+    
+            if (req.user.cart) {
+                response.cart = req.user.cart;
+            }
+    
+            res.status(200).json({
+                message: "Información del usuario obtenida exitosamente",
+                usuario: response,
+            });
+        } catch (error) {
+            console.error("Error en controlador current:", error);
+            res.status(500).json({ error: "Error inesperado al obtener información del usuario." });
+        }
     }
 
     static async logout(req, res) {
