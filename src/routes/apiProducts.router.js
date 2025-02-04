@@ -13,4 +13,4 @@ router.get('/:id', ProductsController.getProductById);
 router.post('/', auth('admin'), ProductsController.createProduct);
 router.put('/:id', auth('admin'), ProductsController.updateProduct);
 router.delete('/:id', auth('admin'), ProductsController.deleteProduct);
-
+router.get('mocks', ProductsController.createMockProduct);

@@ -37,6 +37,17 @@ export class ProductService {
         }
     }
 
+    async createMockProduct() {
+        try {
+            const productData = this.createMockProduct();
+            const one = await Product.create(productData);
+            return one;
+        } catch (error) {
+            throw new Error('Error creando Mock Product: ' + error.message)
+        }
+    }
+    
+
     async updateProduct(id, productData) {
         try {
             const updatedProduct = await this.ProductManager.update(id, productData);

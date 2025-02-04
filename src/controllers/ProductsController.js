@@ -132,6 +132,16 @@ class ProductsController {
             return procesaErrores(res, error);
         }
     }
+
+    async createMockProduct(req, res) {
+        try {
+            const one = await productService.createMockProduct()
+    
+            res.status(201).json({message: "Created!", response: one});
+        } catch (error) {
+            return procesaErrores(res, error);
+        }
+    }
 }
 
 export default new ProductsController();

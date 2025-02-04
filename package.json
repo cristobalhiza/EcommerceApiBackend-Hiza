@@ -30,6 +30,7 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.25.9",
     "@babel/preset-env": "^7.26.0",
+    "@faker-js/faker": "^9.4.0",
     "@flydotio/dockerfile": "^0.5.9",
     "babel-jest": "^29.7.0",
     "cross-env": "^7.0.3",
