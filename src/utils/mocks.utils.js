@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 function createMockProduct() {
 const code = faker.string.alphanumeric(10);
 const title = faker.commerce.productName();
-const description = faker.commerce.fakerDescription();
+const description = faker.commerce.productDescription();
 const price = faker.commerce.price({ min: 100, max: 200, dec: 2 })
 const category = faker.commerce.department();
 const stock = faker.number.int({ min: 0, max: 500 });

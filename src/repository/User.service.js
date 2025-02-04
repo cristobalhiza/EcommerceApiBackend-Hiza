@@ -1,6 +1,6 @@
 // src/services/User.service.js
 import { UserManager } from "../dao/userManager.js";
-import { comparaPassword, generaHash } from "../utils.js";
+import { comparaPassword, generaHash } from "../utils/utils.js";
 
 class UserService {
     constructor(DAO) {

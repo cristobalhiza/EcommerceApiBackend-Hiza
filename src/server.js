@@ -4,7 +4,7 @@ import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 
-import { __dirname } from './utils.js';
+import { __dirname } from './utils/utils.js'
 import vistasRouter from './routes/viewsRouter.js';
 
 import { router as sessionsRouter } from './routes/sessionsRouter.js';

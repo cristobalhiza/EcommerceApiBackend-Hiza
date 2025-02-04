@@ -1,6 +1,6 @@
 // src/routes/viewsRouter.js
 import { Router } from 'express';
-import { passportCall } from '../utils.js';
+import { passportCall } from '../utils/utils.js';
 import { auth } from '../middleware/auth.js';
 import ViewsController from '../controllers/ViewsController.js';
 

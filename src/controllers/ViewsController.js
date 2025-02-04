@@ -2,7 +2,7 @@
 import { isValidObjectId } from 'mongoose';
 import { CartManager } from '../dao/cartManager.js';
 import ProductManager from '../dao/productManager.js';
-import { procesaErrores } from '../utils.js';
+import { procesaErrores } from '../utils/utils.js';
 import { productService } from '../repository/Product.service.js';
 
 class ViewsController {

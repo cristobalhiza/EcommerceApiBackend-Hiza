@@ -1,5 +1,5 @@
 import { usersModel } from "./models/user.model.js";
-import { generaHash } from "../utils.js";
+import { generaHash } from "../utils/utils.js";
 
 export class UserManager {
     static async create(usuario = {}) {

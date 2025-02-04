@@ -3,7 +3,7 @@ import local from "passport-local";
 import passportJWT from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
 import { userService } from "../repository/User.service.js";
-import { comparaPassword, generaHash } from "../utils.js";
+import { comparaPassword, generaHash } from '../utils/utils.js';
 import { config } from "./config.js";
 import { UserManager } from "../dao/userManager.js";
 import { cartService } from "../repository/Cart.service.js";

@@ -1,4 +1,6 @@
 import ProductManager from "../dao/productManager.js";
+import { createMockProduct } from '../utils/mocks.utils.js';
+
 
 export class ProductService {
     constructor(DAO) {
@@ -18,7 +20,7 @@ export class ProductService {
             const product = await this.ProductManager.getBy(filter);
 
             if (product) {
-                return product; 
+                return product;
             }
             return null;
         } catch (error) {
@@ -39,14 +41,27 @@ export class ProductService {
 
     async createMockProduct() {
         try {
-            const productData = this.createMockProduct();
-            const one = await Product.create(productData);
+            const productData = createMockProduct();
+            const one = await this.ProductManager.create(productData);
             return one;
         } catch (error) {
             throw new Error('Error creando Mock Product: ' + error.message)
         }
     }
-    
+
+    async createMockProducts(quantity) {
+        try {
+            const products = [];
+            for (let index = 0; index < quantity; index++) {
+                const one = createMockProduct()
+                products.push(one);
+            }
+            return products;
+        } catch (error) {
+            throw new Error('Error creando Mock Products: ' + error.message)
+        }
+    }
+
 
     async updateProduct(id, productData) {
         try {
