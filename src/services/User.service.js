@@ -1,6 +1,8 @@
 // src/services/User.service.js
 import { UserManager } from "../dao/userManager.js";
 import { comparaPassword, generaHash } from "../utils/utils.js";
+import { createMockUser } from "../utils/mocks.utils.js"
+import loggerUtil from "../utils/logger.util.js";
 
 class UserService {
     constructor(DAO) {
@@ -33,14 +35,32 @@ class UserService {
     async initializeAdmin() {
         const adminCreated = await this.userDAO.crearAdminInicial();
         if (adminCreated) {
-            console.log("Usuario rol admin creado con éxito.");
+            loggerUtil.INFO("Usuario rol admin creado con éxito.");
         } else {
-            console.log("El usuario rol admin ya existe.");
+            loggerUtil.INFO("El usuario rol admin ya existe.");
         }
         return adminCreated;
     }
     async updateUser(userId, data) {
         return await this.userDAO.update(userId, data);
+    }
+
+    async createMockUser() {
+        try {
+            const userData = createMockUser();
+            return await this.userDAO.create(userData);
+        } catch (error) {
+            throw new Error('Error creando Mock User: ' + error.message);
+        }
+    }
+
+    async createMockUsers(quantity) {
+        try {
+            const users = Array.from({ length: quantity }, createMockUser);
+            return users;
+        } catch (error) {
+            throw new Error('Error creando Mock Users: ' + error.message);
+        }
     }
 }
 

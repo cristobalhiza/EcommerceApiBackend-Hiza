@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import loggerUtil from "./utils/logger.util.js"
 
 export const connDB = async (url = "", db = "") => {
     try {
@@ -7,8 +8,8 @@ export const connDB = async (url = "", db = "") => {
             {
                 dbName: db
             })
-        console.log(`Conexión a DB establecida`)
+        loggerUtil.INFO(`Conexión a DB establecida`)
     } catch (err) {
-        console.log(`Error al conectarse con el servidor de BD: ${err.message}`)
+        loggerUtil.WARN(`Error al conectarse con el servidor de BD: ${err.message}`)
     }
 }

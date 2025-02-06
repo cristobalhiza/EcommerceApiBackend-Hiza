@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
+import loggerUtil from '../utils/logger.util.js';
 
 const envFile = {
     production: '.env.prod',
@@ -9,7 +10,7 @@ const envFile = {
 
 const envPath = fs.existsSync(envFile) ? envFile : '.env';
 
-console.log(`Cargando archivo de entorno: ${envPath}`);
+loggerUtil.INFO(`Cargando archivo de entorno: ${envPath}`);
 
 dotenv.config({
     path: envPath,

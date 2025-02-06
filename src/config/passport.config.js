@@ -2,11 +2,11 @@ import passport from "passport";
 import local from "passport-local";
 import passportJWT from 'passport-jwt'
 import GitHubStrategy from 'passport-github2'
-import { userService } from "../repository/User.service.js";
+import { userService } from "../services/User.service.js";
 import { comparaPassword, generaHash } from '../utils/utils.js';
 import { config } from "./config.js";
 import { UserManager } from "../dao/userManager.js";
-import { cartService } from "../repository/Cart.service.js";
+import { cartService } from "../services/Cart.service.js";
 import UsersDTO from "../DTO/UsersDTO.js";
 
 const buscarToken = req => {

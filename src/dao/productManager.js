@@ -4,7 +4,12 @@ export default class ProductManager {
 
     static async get(filter = {}, options = {}) {
         try {
-            return await Product.paginate(filter, { lean: true, ...options });
+            return await Product.paginate(filter, { 
+                lean: true, 
+                collation: { locale: 'en', strength: 2 },
+                select: '-__v -createdAt -updatedAt',
+                ...options 
+            },);
         } catch (error) {
             throw new Error('Error obteniendo productos: ' + error.message);
         }

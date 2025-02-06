@@ -5,10 +5,7 @@ import { passportCall } from '../utils/utils.js';
 
 export const router = Router();
 
-router.get('/mocks', ProductsController.createMockProduct);
-router.get('/mocks/:quantity', ProductsController.createMockProducts);
-
-router.use(passportCall('current'));
+// router.use(passportCall('current'));
 
 router.get('/', ProductsController.getProducts);
 router.get('/:id', ProductsController.getProductById);

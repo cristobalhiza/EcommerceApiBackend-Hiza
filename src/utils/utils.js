@@ -3,6 +3,7 @@ import { dirname } from 'path';
 import bcrypt from 'bcrypt'
 import passport from 'passport';
 import mongoose from 'mongoose';
+import loggerUtil from './logger.util.js';
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
@@ -16,12 +17,20 @@ export const comparaPassword = (password, hash) => {
     return bcrypt.compareSync(password, hash);
 };
 
-export const procesaErrores = (res, error) => {
-    console.error('Error en el servidor:', error);
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({
+export const errorHandler = (res, error) => {
+    loggerUtil.FATAL('Error en el servidor:', error);
+    const statusCode = error.statusCode || 500
+    const message = error.message || "FATAL ERROR"
+    if (statusCode.startsWith("4")) {
+        loggerUtil.WARN(error)
+    } else {
+        loggerUtil.FATAL(error)
+    }
+    return res
+    .status(statusCode)
+    .json({
         error: 'Error inesperado en el servidor. Por favor, intente más tarde.',
-        ...(process.env.NODE_ENV !== 'production' && { detalle: error.message })
+        ...(process.env.NODE_ENV !== 'production' && { detalle: message })
     });
 };
 

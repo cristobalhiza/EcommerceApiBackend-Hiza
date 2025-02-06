@@ -1,9 +1,11 @@
+import loggerUtil from "../../utils/logger.util.js";
+
 document.getElementById('logoutButton').addEventListener('click', async () => {
     try {
         const response = await fetch('/api/sessions/logout', { method: 'GET' });
 
         if (response.ok) {
-            console.log('Sesión cerrada exitosamente.');
+            loggerUtil.INFO('Sesión cerrada exitosamente.');
             window.location.href = '/login';
         } else {
             console.error('Error al cerrar sesión:', await response.json());

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { SessionsController } from '../controllers/SessionsController.js'
-import { passportCall } from '..//utils/utils.js';
+import { passportCall } from '../utils/utils.js';
 
 export const router = Router();
 

@@ -37,7 +37,7 @@ Este es el proyecto de la **Primera Pre-Entrega** del curso de Backend II de Cod
 │   │   │   ├── registro.js
 │   ├── routes
 │   │   ├── sessionsRouter.js
-│   │   ├── viewsRouter.js
+│   │   ├── views.router.js
 │   ├── views
 │   │   ├── layouts
 │   │   │   ├── main.handlebars

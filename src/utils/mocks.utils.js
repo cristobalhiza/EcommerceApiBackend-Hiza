@@ -12,4 +12,16 @@ const thumbnail = faker.image.url({width: 500, height: 500 })
 return {code, title, description, price, category, stock, status, thumbnail}
 }
 
-export { createMockProduct }
+function createMockUser() {
+    const first_name = faker.person.firstName();
+    const last_name = faker.person.lastName();
+    const email = faker.internet.email(first_name, last_name);
+    const age = faker.number.int({ min: 18, max: 80 });
+    const password = faker.internet.password({ length: 10 });
+    const cart = faker.string.uuid();
+    const role = faker.helpers.arrayElement(['user', 'admin']);
+    
+    return { first_name, last_name, email, age, password, cart, role };
+}
+
+export { createMockProduct, createMockUser }

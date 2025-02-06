@@ -2,8 +2,7 @@
 import { isValidObjectId } from 'mongoose';
 import { CartManager } from '../dao/cartManager.js';
 import ProductManager from '../dao/productManager.js';
-import { procesaErrores } from '../utils/utils.js';
-import { productService } from '../repository/Product.service.js';
+import { productService } from '../services/Product.service.js';
 
 class ViewsController {
     renderHome(req, res) {
@@ -26,62 +25,65 @@ class ViewsController {
             isLogin: !!req.user
         });
     }
-    
 
-    async renderCart(req, res) {
+
+    async renderCart(req, res, next) {
         try {
             const { cid } = req.params;
 
             if (!isValidObjectId(cid)) {
-                return res.status(400).render('cart', { error: 'El ID del carrito no es válido.' });
+                return next(createError(400, 'El ID del carrito no es válido'))
             }
 
             const cart = await CartManager.getCart(cid);
             if (!cart) {
-                return res.status(404).render('cart', { error: 'Carrito no encontrado' });
+                return next(createError(404, 'Carrito no encontrado'));
             }
 
             res.render('cart', { cart });
         } catch (error) {
-            return procesaErrores(res, error);
+            next(error);
         }
     }
 
-    async renderProducts(req, res) {
+    async renderProducts(req, res, next) {
         try {
             const { limit = 10, page = 1, sort, query } = req.query;
-    
+
             const filter = query ? { name: { $regex: query, $options: "i" } } : {};
             const options = {
                 limit: parseInt(limit, 10),
                 page: parseInt(page, 10),
                 sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
             };
-    
-            const result = await productService.getProducts(filter, options); 
+
+            const result = await productService.getProducts(filter, options);
+            if (!result || result.docs.length === 0) {
+                return next(createError(404, "No se encontraron productos"));
+            }
             res.status(200).render("index", { products: result.docs });
         } catch (error) {
-            console.error("Error en renderProducts:", error); 
-            return procesaErrores(res, error);
+            console.error("Error en renderProducts:", error);
+            next(error);
         }
     }
-    
 
-    async renderProductDetails(req, res) {
+
+    async renderProductDetails(req, res, next) {
         try {
             const { pid } = req.params;
             if (!isValidObjectId(pid)) {
-                return res.status(400).render('productDetails', { error: 'El ID del producto no es válido' });
+                return next(createError(400, 'El ID del producto no es válido'));
             }
 
             const product = await ProductManager.getBy({ _id: pid });
-            if (product) {
-                res.status(200).render('productDetails', { product });
-            } else {
-                res.status(404).render('productDetails', { error: 'Producto no encontrado' });
+            if (!product) {
+                return next(createError(404, 'Producto no encontrado'));
             }
+
+            res.status(200).render('productDetails', { product });
         } catch (error) {
-            return procesaErrores(res, error);
+            next(error);
         }
     }
 }

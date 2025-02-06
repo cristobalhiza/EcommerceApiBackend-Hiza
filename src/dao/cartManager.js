@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Cart from './models/cart.model.js';
+import loggerUtil from '../utils/logger.util.js';
 
 export class CartManager {
     static async create() {
@@ -23,7 +24,7 @@ export class CartManager {
     static async clearCart(cartId) {
         const cart = await Cart.findById(cartId);
         if (!cart) {
-            console.log("Carrito no encontrado en la base de datos."); 
+            loggerUtil.WARN("Carrito no encontrado en la base de datos."); 
             return null;
         }
         cart.products = [];

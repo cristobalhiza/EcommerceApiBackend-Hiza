@@ -1,4 +1,4 @@
-// src/routes/viewsRouter.js
+// src/routes/views.router.js
 import { Router } from 'express';
 import { passportCall } from '../utils/utils.js';
 import { auth } from '../middleware/auth.js';
