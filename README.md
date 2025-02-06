@@ -2,6 +2,23 @@
 
 Este es mi proyecto del curso de Backend de Coderhouse. Se trata de una aplicación backend desarrollada con Node.js, Express y Passport, que incluye autenticación con usuarios locales y GitHub, junto con un sistema de gestión de rutas y mecanismos de autenticación y autorización. Permite administrar usuarios, productos, carritos de compra y generar tickets con la información de cada checkout que se realiza de un carrito.
 
+## Uso de la Imagen en Docker Hub
+### Descargar la Imagen desde Docker Hub
+
+docker pull cristobalhiza/ecommerceapibackend-hiza:latest
+
+### Ejecutar el Contenedor
+
+docker run --env-file .env -p 8080:8080 -d cristobalhiza/ecommerceapibackend-hiza:latest
+
+### Verificar que el Contenedor Está Corriendo
+
+docker ps
+
+### Acceder a la Aplicación en el Navegador
+
+http://localhost:8080/api/products
+
 ## Tecnologías Utilizadas
 
 - **Node.js**
