@@ -5,7 +5,7 @@ import { passportCall } from '../utils/utils.js';
 
 export const router = Router();
 
-// router.use(passportCall('current'));
+router.use(passportCall('current'));
 
 router.get('/', ProductsController.getProducts);
 router.get('/:id', ProductsController.getProductById);
