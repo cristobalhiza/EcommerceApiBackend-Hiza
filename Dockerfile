@@ -1,23 +1,22 @@
-FROM node:18-alpine
-
-WORKDIR /app
-
-ENV PNPM_HOME="/app/.pnpm"
+# Etapa base
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV NODE_PATH="/app/node_modules"
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN npm install -g pnpm \
-    && pnpm config set store-dir /app/pnpm-store \
-    && pnpm install --no-frozen-lockfile --shamefully-hoist --strict-peer-dependencies=false
-
+RUN corepack enable
+WORKDIR /app
 COPY . .
 
-RUN ls -l node_modules/express
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --shamefully-hoist
 
-EXPOSE 8080
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm run build
 
+FROM node:20-slim
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
 ENV NODE_ENV=production
-
-CMD ["node", "./src/app.js"]
+EXPOSE 8080
+CMD ["node", "./dist/app.js"]
