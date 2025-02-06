@@ -1,6 +1,6 @@
-# Proyecto Backend II - Cristobal Hiza - Coderhouse
+# Proyecto Backend - Cristobal Hiza - Coderhouse
 
-Este es el proyecto de la **Primera Pre-Entrega** del curso de Backend II de Coderhouse. Se trata de una aplicación backend desarrollada con Node.js, Express y Passport, que incluye autenticación con usuarios locales y GitHub, junto con un sistema de gestión de rutas y mecanismos de autenticación y autorización.
+Este es mi proyecto del curso de Backend de Coderhouse. Se trata de una aplicación backend desarrollada con Node.js, Express y Passport, que incluye autenticación con usuarios locales y GitHub, junto con un sistema de gestión de rutas y mecanismos de autenticación y autorización. Permite administrar usuarios, productos, carritos de compra y generar tickets con la información de cada checkout que se realiza de un carrito.
 
 ## Tecnologías Utilizadas
 
@@ -10,51 +10,80 @@ Este es el proyecto de la **Primera Pre-Entrega** del curso de Backend II de Cod
 - **Passport**
 - **JWT (JSON Web Tokens)**
 - **Handlebars**
-- **Fly.io (Despliegue en la nube)**
+- **Winston**
+- **Faker**
 
 ## Estructura del proyecto
 
 ```plaintext
 ├── .github
-│   ├── workflows
-│   │   ├── fly-deploy.yml
 ├── src
-│   ├── config
-│   │   ├── config.js
-│   │   ├── passport.config.js
-│   ├── dao
-│   │   ├── models
-│   │   │   ├── usuarios.model.js
-│   │   ├── UserManager.js
-│   ├── middleware
-│   │   ├── auth.js
-│   │   ├── checkAuth.js
-│   ├── public
-│   │   ├── css
-│   │   │   ├── styles.css
-│   │   ├── js
-│   │   │   ├── login.js
-│   │   │   ├── registro.js
-│   ├── routes
-│   │   ├── sessionsRouter.js
-│   │   ├── views.router.js
-│   ├── views
-│   │   ├── layouts
-│   │   │   ├── main.handlebars
-│   │   ├── partials
-│   │   │   ├── menu.handlebars
-│   │   ├── current.handlebars
-│   │   ├── home.handlebars
-│   │   ├── login.handlebars
-│   │   ├── registro.handlebars
-│   ├── app.js
-│   ├── connDB.js
-│   ├── utils.js
-├── .dockerignore
+    ├── config
+        ├── config.js
+        ├── passport.config.js
+    ├── controllers
+        ├── CartController.js
+        ├── MocksController.js
+        ├── ProductsController.js
+        ├── SessionsController.js
+        ├── ViewsController.js
+    ├── dao
+        ├── models
+            ├── cart.model.js
+            ├── product.model.js
+            ├── ticketModel.js
+            ├── user.model.js
+        ├── cartManager.js
+        ├── productManager.js
+        ├── userManager.js
+    ├── DTO
+        ├── UsersDTO.js
+    ├── middleware
+        ├── auth.js
+        ├── errorHandler.js
+        ├── httpLogger.mid.js
+    ├── public
+        ├── css
+            ├── styles.css
+        ├── js
+            ├── login.js
+            ├── main.js
+            ├── registro.js
+    ├── routes
+        ├── apiCarts.router.js
+        ├── apiProducts.router.js
+        ├── mocks.router.js
+        ├── sessions.router.js
+        ├── views.router.js
+    ├── services
+        ├── Cart.service.js
+        ├── Product.service.js
+        ├── User.service.js
+    ├── utils
+        ├── errors
+            ├── error.log
+        ├── logger.util.js
+        ├── mocks.utils.js
+        ├── utils.js
+    ├── views
+        ├── layouts
+            ├── main.handlebars
+        ├── partials
+            ├── menu.handlebars
+        ├── current.handlebars
+        ├── home.handlebars
+        ├── login.handlebars
+        ├── registro.handlebars
+    ├── app.js
+    ├── connDB.js
+    ├── seed.js
+    ├── server.js
+├── .babelrc
+├── .env
 ├── .gitignore
 ├── Dockerfile
-├── fly.toml
 ├── githubApi.txt
+├── jest.config.js
 ├── package.json
 ├── pnpm-lock.yaml
 ├── PROJECT_STRUCTURE.txt
@@ -83,6 +112,5 @@ Este es el proyecto de la **Primera Pre-Entrega** del curso de Backend II de Cod
 - **Cerrar Sesión:**
   - **GET** `/api/sessions/logout`: Cierra la sesión del usuario.
 
-### Despliegue en Fly.io
-
-El proyecto está desplegado en [Fly.io](https://fly.io), y puedes acceder a la aplicación en: [https://proyectobackend2-hiza.fly.dev/](https://proyectobackend2-hiza.fly.dev/).
+- **Generar Mocks**
+  - **GET** `/api/mocks/:users/:products`: Crea la cantidad seleccionada de mocks de usuarios o productos a elección.
