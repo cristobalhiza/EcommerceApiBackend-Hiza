@@ -7,9 +7,11 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN npm install -g pnpm && pnpm install --no-frozen-lockfile --shamefully-hoist
+RUN npm install -g pnpm && pnpm install --no-frozen-lockfile --shamefully-hoist --strict-peer-dependencies=false
 
 COPY . .
+
+RUN ls -l node_modules/express
 
 EXPOSE 8080
 
