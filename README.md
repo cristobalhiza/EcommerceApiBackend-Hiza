@@ -79,6 +79,7 @@ Este es mi proyecto del curso de Backend de Coderhouse. Se trata de una aplicaci
     ├── seed.js
     ├── server.js
 ├── .babelrc
+├── .dockerignore
 ├── .env
 ├── .gitignore
 ├── Dockerfile
