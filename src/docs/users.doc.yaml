@@ -1,0 +1,75 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: User's first name
+        last_name:
+          type: string
+          description: User's last name
+        email:
+          type: string
+          format: email
+          unique: true
+          description: User's email address, used to log in
+        age:
+          type: number
+          description: User's age
+        password:
+          type: string
+          description: User's password
+        cart:
+          type: string
+          format: objectId
+          description: Reference to the user's cart
+        role:
+          type: string
+          description: User's role (default user)
+          default: user  
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user was last updated
+      required:
+        - email
+        - password
+      example:
+        first_name: juan
+        last_name: burro
+        email: juanburro@example.com
+        age: 30
+        password: password123
+        cart: "60d21b4667d0d8992e610c85"
+        role: user
+paths:
+  /api/sessions/registro:
+    post:
+      summary: Create a new user into the database, including password hash.
+      tags:
+        -Auth
+  /api/sessions/login:
+    post:
+      summary: Login a oreviously registered user, including token into cookie.
+      tags:
+        -Auth
+/api/sessions/current: 
+  get:
+    summary: Get the current user's information.
+    tags:
+      - Auth
+/api/sessions/logout:
+  get:
+    summary: Logout the current user, end current session.
+    tags:
+      - Auth
+/api/sessions/github:
+  get:
+    summary: Get the current user's information from GitHub.
+    tags:
+      - Auth

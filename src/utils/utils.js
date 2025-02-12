@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import path from 'path';
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import mongoose from 'mongoose';
 import loggerUtil from './logger.util.js';
 
 const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+export const __dirname = path.resolve(path.dirname(__filename), "..");
 
 export const generaHash = (password) => {
     const salt = bcrypt.genSaltSync(10); 

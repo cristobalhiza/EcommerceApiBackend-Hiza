@@ -1,25 +1,32 @@
-import express from 'express';
 import path from 'path';
+
+import express from 'express';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 import compression from 'express-compression';
+import { serve, setup } from 'swagger-ui-express';
 
-import { __dirname } from './utils/utils.js'
+import { __dirname } from './utils/utils.js';
+import { config } from './config/config.js';
+import loggerUtil from './utils/logger.util.js';
+import docSpec from './utils/docSpec.util.js';
+
+import errorHandler from './middleware/errorHandler.js';
+import httpLogger from './middleware/httpLogger.mid.js';
+
+import { userService } from './services/User.service.js';
+
+import { connDB } from './connDB.js';
+
+import { iniciarPassport } from './config/passport.config.js';
+
 import vistasRouter from './routes/views.router.js';
-
 import { router as sessionsRouter } from './routes/sessions.router.js';
 import { router as productsRouter } from './routes/apiProducts.router.js';
 import { router as cartsRouter } from './routes/apiCarts.router.js';
-import { router as mocksRouter } from './routes/mocks.router.js'
-import { connDB } from './connDB.js';
-import { config } from './config/config.js';
-import { iniciarPassport } from './config/passport.config.js';
-import { userService } from './services/User.service.js';
-import loggerUtil from './utils/logger.util.js'
-import errorHandler from './middleware/errorHandler.js';
-import httpLogger from './middleware/httpLogger.mid.js';
-;
+import { router as mocksRouter } from './routes/mocks.router.js';
+
 
 export class Server {
     constructor() {
@@ -40,7 +47,6 @@ export class Server {
             brotli: { enabled: true, zlib: {} }
         }))
         this.app.use(cookieParser());
-        this.app.use(express.static('./src/public'));
         iniciarPassport();
         this.app.use(passport.initialize());
         this.app.use(express.static(path.join(__dirname, '/public')));
@@ -48,6 +54,7 @@ export class Server {
             res.locals.isLogin = !!req.cookies.tokenCookie;
             next();
         });
+        this.app.use("/api/docs", serve, setup(docSpec));
         this.app.use(httpLogger)
     }
 

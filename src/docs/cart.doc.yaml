@@ -1,0 +1,41 @@
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User ID reference
+        products:
+          type: array
+          description: List of products in the cart
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                description: Product ID reference
+              quantity:
+                type: number
+                description: Quantity of the product
+        expiresAt:
+          type: string
+          format: date-time
+          description: Expiration date of the cart
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the cart was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the cart was last updated
+      required:
+        - products
+      example:
+        userId: "60d21b4667d0d8992e610c85"
+        products:
+          - product: "60d21b4667d0d8992e610c86"
+            quantity: 2
+          - product: "60d21b4667d0d8992e610c87"
+            quantity: 1

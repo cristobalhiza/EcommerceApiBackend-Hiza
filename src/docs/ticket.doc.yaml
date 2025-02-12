@@ -1,0 +1,45 @@
+components:
+  schemas:
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Unique ticket code
+        purchase_datetime:
+          type: string
+          format: date-time
+          description: Date and time when the ticket was purchased
+        purchaser:
+          type: string
+          description: Name of the purchaser
+        amount:
+          type: number
+          format: float
+          description: Total amount of the ticket
+        detalle:
+          type: array
+          description: Details of the ticket
+          items:
+            type: string
+            description: Detail item
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the ticket was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the ticket was last updated
+      required:
+        - code
+        - purchaser
+        - amount
+      example:
+        code: "TICKET12345"
+        purchase_datetime: "2025-02-12T10:00:00Z"
+        purchaser: "Juan Burro"
+        amount: 250
+        detalle:
+          - "2x Wireless Headphones"
+          - "1x Smartphone Case"

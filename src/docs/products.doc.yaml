@@ -1,0 +1,55 @@
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Unique code of the product
+        title:
+          type: string
+          description: Title of the product
+        description:
+          type: string
+          description: Description of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product
+        category:
+          type: string
+          description: Category of the product
+        stock:
+          type: number
+          description: Stock quantity of the product
+        status:
+          type: boolean
+          description: Status of the product (active or inactive)
+        thumbnail:
+          type: string
+          description: URL of the product's thumbnail image
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was last updated
+      required:
+        - code
+        - title
+        - price
+        - category
+        - stock
+      example:
+        code: "P12345"
+        title: "Wireless Headphones"
+        description: "High-quality Bluetooth headphones."
+        price: 100
+        category: "Electronics"
+        stock: 150
+        status: true
+        thumbnail: "https://example.com/images/headphones.jpg"
+        paths:
+        
