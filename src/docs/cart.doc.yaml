@@ -39,3 +39,258 @@ components:
             quantity: 2
           - product: "60d21b4667d0d8992e610c87"
             quantity: 1
+
+paths:
+  /api/carts:
+    post:
+      summary: Create an empty cart
+      tags:
+        - Cart
+      responses:
+        "201":
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Carrito creado"
+                  cart:
+                    $ref: "#/components/schemas/Cart"
+        "500":
+          description: Internal server error
+
+    get:
+      summary: Get all carts (Admin only)
+      tags:
+        - Cart
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of carts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cart"
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+
+  /api/carts/{cid}:
+    get:
+      summary: Get a cart by ID
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Invalid cart ID
+        "404":
+          description: Cart not found
+        "500":
+          description: Internal server error
+
+    put:
+      summary: Update a cart
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                      quantity:
+                        type: number
+      responses:
+        "200":
+          description: Cart updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        "400":
+          description: Invalid cart ID or request body
+        "404":
+          description: Cart not found
+        "500":
+          description: Internal server error
+
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary: Add a product to an existing cart
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  description: Quantity of the product
+      responses:
+        "200":
+          description: Product added to cart successfully
+        "400":
+          description: Invalid cart ID, product ID, or request body
+        "404":
+          description: Cart or product not found
+        "500":
+          description: Internal server error
+
+    put:
+      summary: Update the quantity of a product in a cart
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+      responses:
+        "200":
+          description: Product quantity updated successfully
+        "400":
+          description: Invalid request
+        "404":
+          description: Cart or product not found
+        "500":
+          description: Internal server error
+
+    delete:
+      summary: Remove a product from a cart
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product removed from cart successfully
+        "400":
+          description: Invalid cart ID or product ID
+        "404":
+          description: Cart or product not found
+        "500":
+          description: Internal server error
+
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Complete a purchase for a cart
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Purchase completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket:
+                    type: object
+                    description: Purchase ticket details
+        "400":
+          description: Cart is empty or invalid request
+        "403":
+          description: Unauthorized to purchase this cart
+        "500":
+          description: Internal server error
+
+  /api/carts/clear:
+    delete:
+      summary: Clear all products from the cart
+      tags:
+        - Cart
+      responses:
+        "200":
+          description: Cart cleared successfully
+        "400":
+          description: No cart found for user
+        "404":
+          description: Cart not found
+        "500":
+          description: Internal server error

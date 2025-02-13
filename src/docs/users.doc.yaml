@@ -52,24 +52,24 @@ paths:
     post:
       summary: Create a new user into the database, including password hash.
       tags:
-        -Auth
+        - Auth
   /api/sessions/login:
     post:
       summary: Login a oreviously registered user, including token into cookie.
       tags:
-        -Auth
-/api/sessions/current: 
-  get:
-    summary: Get the current user's information.
-    tags:
-      - Auth
-/api/sessions/logout:
-  get:
-    summary: Logout the current user, end current session.
-    tags:
-      - Auth
-/api/sessions/github:
-  get:
-    summary: Get the current user's information from GitHub.
-    tags:
-      - Auth
+        - Auth
+  /api/sessions/current: 
+    get:
+      summary: Get the current user's information.
+      tags:
+        - Auth
+  /api/sessions/logout:
+    get:
+      summary: Logout the current user, end current session.
+      tags:
+        - Auth
+  /api/sessions/github:
+    get:
+      summary: Get the current user's information from GitHub.
+      tags:
+        - Auth

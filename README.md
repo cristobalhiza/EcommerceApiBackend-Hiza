@@ -106,29 +106,81 @@ http://localhost:8080/api/products
 ├── pnpm-lock.yaml
 ├── PROJECT_STRUCTURE.txt
 ├── README.md
-````
+```
 ## Uso de la Aplicación
 
-### Rutas Locales
+### Rutas Frontend
+# Las rutas de la API REST se encuentran descritas mediante la ruta "/api/docs"
 
-- **Registro de Usuarios Locales:**
-  - **GET** `/registro`: Muestra la página de registro.
-  - **POST** `/api/sessions/registro`: Crea una nueva cuenta de usuario.
+GET	/	Renderiza la página de inicio.
+GET	/registro	Renderiza la página de registro de usuarios.
+GET	/login	Renderiza la página de inicio de sesión.
+GET	/current	Renderiza la página del usuario autenticado. Requiere autenticación.
+GET	/cart/:cid	Renderiza la vista del carrito de compras del usuario.
+GET	/products	Renderiza la lista de productos con filtros y paginación.
+GET	/products/:pid	Renderiza la vista de detalles de un producto específico.
 
-- **Inicio de Sesión Local:**
-  - **GET** `/login`: Muestra la página de login.
-  - **POST** `/api/sessions/login`: Inicia sesión para usuarios locales.
+### Detalles de las Rutas
+## Inicio
 
-- **Autenticación con GitHub:**
-  - **GET** `/api/sessions/github`: Redirige a GitHub para autenticación.
-  - **GET** `/api/sessions/github/callback`: Callback para manejar la autenticación.
+    Ruta: /
+    Descripción: Renderiza la página principal de la aplicación.
+    Datos: No requiere datos adicionales.
+    Ejemplo de uso: Un usuario accede a la web en https://misitio.com/.
 
-- **Estado del Usuario Actual:**
-  - **GET** `/current`: Página que muestra los datos del usuario autenticado.
-  - **GET** `/api/sessions/current`: Verifica el estado de la sesión del usuario actual.
+## Registro
 
-- **Cerrar Sesión:**
-  - **GET** `/api/sessions/logout`: Cierra la sesión del usuario.
+    Ruta: /registro
+    Descripción: Muestra el formulario para registrar un nuevo usuario.
+    Datos: No requiere autenticación.
+    Ejemplo de uso: https://misitio.com/registro
 
-- **Generar Mocks**
-  - **GET** `/api/mocks/:users/:products`: Crea la cantidad seleccionada de mocks de usuarios o productos a elección.
+## Inicio de Sesión
+
+    Ruta: /login
+    Descripción: Muestra el formulario de inicio de sesión.
+    Datos: No requiere autenticación.
+    Ejemplo de uso: https://misitio.com/login
+
+## Perfil del Usuario
+
+    Ruta: /current
+    Descripción: Renderiza la página con la información del usuario autenticado.
+    Requiere Autenticación: Sí
+    Ejemplo de uso: https://misitio.com/current
+
+## Carrito de Compras
+
+    Ruta: /cart/:cid
+    Descripción: Muestra los productos en el carrito de compras de un usuario.
+    Requiere Autenticación: No
+    Parámetros:
+        cid: ID del carrito.
+    Ejemplo de uso: https://misitio.com/cart/60d21b4667d0d8992e610c85
+
+## Lista de Productos
+
+    Ruta: /products
+    Descripción: Muestra una lista de productos con filtros y paginación.
+    Datos opcionales (query params):
+        limit: Número de productos por página.
+        page: Número de página.
+        sort: Orden de los productos (asc o desc).
+        query: Búsqueda por nombre del producto.
+    Ejemplo de uso:
+        https://misitio.com/products?limit=10&page=2
+        https://misitio.com/products?query=auriculares&sort=desc
+
+## Detalle de un Producto
+
+    Ruta: /products/:pid
+    Descripción: Muestra la página con la información detallada de un producto específico.
+    Parámetros:
+        pid: ID del producto.
+    Ejemplo de uso: https://misitio.com/products/60d21b4667d0d8992e610c86
+
+## Notas Adicionales
+
+    Estas rutas están diseñadas para renderizar páginas HTML, no JSON.
+    /current requiere autenticación mediante passportCall('current').
+    Se pueden agregar más filtros a /products según necesidades futuras.
