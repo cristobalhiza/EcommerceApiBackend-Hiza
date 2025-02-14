@@ -29,84 +29,8 @@ http://localhost:8080/api/products
 - **Handlebars**
 - **Winston**
 - **Faker**
+- **Swagger**
 
-## Estructura del proyecto
-
-```plaintext
-├── .github
-├── src
-    ├── config
-        ├── config.js
-        ├── passport.config.js
-    ├── controllers
-        ├── CartController.js
-        ├── MocksController.js
-        ├── ProductsController.js
-        ├── SessionsController.js
-        ├── ViewsController.js
-    ├── dao
-        ├── models
-            ├── cart.model.js
-            ├── product.model.js
-            ├── ticketModel.js
-            ├── user.model.js
-        ├── cartManager.js
-        ├── productManager.js
-        ├── userManager.js
-    ├── DTO
-        ├── UsersDTO.js
-    ├── middleware
-        ├── auth.js
-        ├── errorHandler.js
-        ├── httpLogger.mid.js
-    ├── public
-        ├── css
-            ├── styles.css
-        ├── js
-            ├── login.js
-            ├── main.js
-            ├── registro.js
-    ├── routes
-        ├── apiCarts.router.js
-        ├── apiProducts.router.js
-        ├── mocks.router.js
-        ├── sessions.router.js
-        ├── views.router.js
-    ├── services
-        ├── Cart.service.js
-        ├── Product.service.js
-        ├── User.service.js
-    ├── utils
-        ├── errors
-            ├── error.log
-        ├── logger.util.js
-        ├── mocks.utils.js
-        ├── utils.js
-    ├── views
-        ├── layouts
-            ├── main.handlebars
-        ├── partials
-            ├── menu.handlebars
-        ├── current.handlebars
-        ├── home.handlebars
-        ├── login.handlebars
-        ├── registro.handlebars
-    ├── app.js
-    ├── connDB.js
-    ├── seed.js
-    ├── server.js
-├── .babelrc
-├── .dockerignore
-├── .env
-├── .gitignore
-├── Dockerfile
-├── githubApi.txt
-├── jest.config.js
-├── package.json
-├── pnpm-lock.yaml
-├── PROJECT_STRUCTURE.txt
-├── README.md
-```
 ## Uso de la Aplicación
 
 ### Rutas Frontend
@@ -184,3 +108,88 @@ GET	/products/:pid	Renderiza la vista de detalles de un producto específico.
     Estas rutas están diseñadas para renderizar páginas HTML, no JSON.
     /current requiere autenticación mediante passportCall('current').
     Se pueden agregar más filtros a /products según necesidades futuras.
+
+## Estructura del proyecto
+
+```plaintext
+├── .github
+├── src
+    ├── config
+        ├── config.js
+        ├── passport.config.js
+    ├── controllers
+        ├── CartController.js
+        ├── MocksController.js
+        ├── ProductsController.js
+        ├── SessionsController.js
+        ├── ViewsController.js
+    ├── dao
+        ├── models
+            ├── cart.model.js
+            ├── product.model.js
+            ├── ticketModel.js
+            ├── user.model.js
+        ├── cartManager.js
+        ├── productManager.js
+        ├── userManager.js
+    ├── docs
+        ├── cart.doc.yaml
+        ├── mocks.doc.yaml
+        ├── products.doc.yaml
+        ├── ticket.doc.yaml
+        ├── users.doc.yaml
+    ├── DTO
+        ├── UsersDTO.js
+    ├── middleware
+        ├── auth.js
+        ├── errorHandler.js
+        ├── httpLogger.mid.js
+    ├── public
+        ├── css
+            ├── styles.css
+        ├── js
+            ├── login.js
+            ├── main.js
+            ├── registro.js
+    ├── routes
+        ├── apiCarts.router.js
+        ├── apiProducts.router.js
+        ├── mocks.router.js
+        ├── sessions.router.js
+        ├── views.router.js
+    ├── services
+        ├── Cart.service.js
+        ├── Product.service.js
+        ├── User.service.js
+    ├── utils
+        ├── errors
+            ├── error.log
+        ├── docSpec.util.js
+        ├── logger.util.js
+        ├── mocks.utils.js
+        ├── utils.js
+    ├── views
+        ├── layouts
+            ├── main.handlebars
+        ├── partials
+            ├── menu.handlebars
+        ├── current.handlebars
+        ├── home.handlebars
+        ├── login.handlebars
+        ├── registro.handlebars
+    ├── app.js
+    ├── connDB.js
+    ├── seed.js
+    ├── server.js
+├── .babelrc
+├── .dockerignore
+├── .env
+├── .gitignore
+├── Dockerfile
+├── githubApi.txt
+├── jest.config.js
+├── package.json
+├── pnpm-lock.yaml
+├── PROJECT_STRUCTURE.txt
+├── README.md
+```

@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Mock Data API
+  description: API to generate mock user data with shopping carts and products.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+paths:
+  /mocks/{users}/{products}:
+    get:
+      summary: Generate mock user and product data in carts
+      description: Generates a specific number of mock users with shopping carts containing up to a specified number of products.
+      tags:
+        - Mocks
+      parameters:
+        - name: users
+          in: path
+          required: true
+          description: Number of mock users to generate.
+          schema:
+            type: integer
+            minimum: 1
+            example: 5
+        - name: products
+          in: path
+          required: true
+          description: Maximum number of products in each user's cart.
+          schema:
+            type: integer
+            minimum: 1
+            example: 10
+      responses:
+        "201":
+          description: Mock data successfully generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Mock data created!"
+                  mockUsers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            first_name:
+                              type: string
+                              example: "Juan"
+                            last_name:
+                              type: string
+                              example: "Doe"
+                            email:
+                              type: string
+                              example: "juanburro@example.com"
+                            age:
+                              type: integer
+                              example: 30
+                            role:
+                              type: string
+                              example: "user"
+                        cart:
+                          type: object
+                          properties:
+                            userId:
+                              type: string
+                              example: "60d21b4667d0d8992e610c85"
+                            products:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  product:
+                                    type: string
+                                    example: "60d21b4967d0d8992e610c86"
+                                  title:
+                                    type: string
+                                    example: "Smartphone XYZ"
+                                  price:
+                                    type: number
+                                    example: 299.99
+                                  category:
+                                    type: string
+                                    example: "Electronics"
+                                  quantity:
+                                    type: integer
+                                    example: 2
+        "400":
+          description: Invalid parameters or incorrect request.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid parameters. They must be numbers greater than 0."
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected server error."
