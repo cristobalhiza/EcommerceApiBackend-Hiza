@@ -37,7 +37,7 @@ export const iniciarPassport = () => {
                     }
                     const existe = await userService.getUserBy({ email: username })
                     if (existe) {
-                        return done(null, false, { message: `Ya existe un usuario con email ${username}` });
+                        return done(null, false, { status: 400, message: `Ya existe un usuario con email ${username}` });
                     }
                     const hashedPassword = generaHash(password);
 

@@ -132,25 +132,6 @@ class ProductsController {
                 }
     }
 
-    // async createMockProduct(req, res, next) {
-    //     try {
-    //         const one = await productService.createMockProduct()
-    
-    //         res.status(201).json({message: "Created!", response: one});
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // }
-
-    // async createMockProducts(req, res, next) {
-    //     try {
-    //         const { quantity } = req.params;
-    //         const products = await productService.createMockProducts(quantity);
-    //         return res.status(201).json({ message: `${quantity} Products Created! `, response: products });
-    //     } catch (error) {
-    //         next(error)
-    //     }
-    // }
 }
 
 export default new ProductsController();

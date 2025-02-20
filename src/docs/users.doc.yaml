@@ -47,12 +47,14 @@ components:
         password: "password123"
         cart: "60d21b4667d0d8992e610c85"
         role: "user"
+
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
       name: tokenCookie
       description: JWT token stored in cookies for authentication.
+
   requestBodies:
     Login:
       description: Credentials required for user authentication.
@@ -71,6 +73,106 @@ components:
             required:
               - email
               - password
+
+  responses:
+    RegisterSuccess:
+      description: User successfully registered.
+      type: object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Successful registration"
+              user:
+                $ref: '#/components/schemas/User'
+
+    LoginSuccess:
+      description: Login successful, returns a JWT token.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Successful login"
+              user:
+                $ref: '#/components/schemas/User'
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    GetCurrentUserSuccess:
+      description: Successfully retrieved user information.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "User information successfully retrieved"
+              user:
+                $ref: '#/components/schemas/User'
+
+    LogoutSuccess:
+      description: Logout successful.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Logout successful"
+
+    Unauthorized:
+      description: Unauthorized, authentication required.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "User not authenticated"
+
+    BadRequest:
+      description: Bad request, missing or invalid parameters.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid request parameters"
+
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Resource not found"
+
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Something went wrong"
+
 paths:
   /api/sessions/registro:
     post:
@@ -85,27 +187,11 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         "201":
-          description: User successfully registered.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Successful registration"
-                  newUser:
-                    $ref: '#/components/schemas/User'
+          $ref: '#/components/responses/RegisterSuccess'
         "400":
-          description: Bad request, missing or invalid parameters.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "User registration failed"
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/sessions/login:
     post:
@@ -116,30 +202,11 @@ paths:
         $ref: '#/components/requestBodies/Login'
       responses:
         "200":
-          description: Login successful, returns a JWT token.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Successful login"
-                  user:
-                    $ref: '#/components/schemas/User'
-                  token:
-                    type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          $ref: '#/components/responses/LoginSuccess'
         "401":
-          description: Invalid credentials.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Invalid credentials"
+          $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/sessions/current:
     get:
@@ -162,15 +229,9 @@ paths:
                   user:
                     $ref: '#/components/schemas/User'
         "401":
-          description: Unauthorized, user is not authenticated.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "User not authenticated"
+          $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/sessions/logout:
     get:
@@ -189,15 +250,9 @@ paths:
                     type: string
                     example: "Logout successful"
         "401":
-          description: No active session to log out.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "No active session found"
+          $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/sessions/github:
     get:
@@ -218,12 +273,6 @@ paths:
                   user:
                     $ref: '#/components/schemas/User'
         "401":
-          description: GitHub authentication failed.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "GitHub authentication failed"
+          $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'

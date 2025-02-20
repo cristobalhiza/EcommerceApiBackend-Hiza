@@ -1,7 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import path from "path";
 import { __dirname } from "./utils.js";
-import fs from 'fs';
 
 const opts = {
     definition: {

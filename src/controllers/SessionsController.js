@@ -76,12 +76,19 @@ export class SessionsController {
 
     static async logout(req, res, next) {
         try {
+            const token = req.cookies?.tokenCookie;
+            
+            if (!token) {
+                return res.status(401).json({ error: "No hay ningún usuario autenticado." });
+            }
+    
             res.clearCookie('tokenCookie');
+    
             const { web } = req.query;
             if (web) {
                 return res.redirect(`/login?mensaje=¡Logout exitoso!`);
             }
-
+    
             res.setHeader('Content-Type', 'application/json');
             return res.status(200).json({ mensaje: '¡Logout exitoso!' });
         } catch (error) {
