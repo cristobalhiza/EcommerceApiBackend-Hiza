@@ -6,7 +6,7 @@ export class SessionsController {
     static async registro(req, res, next) {
         try {
             if (!req.user) {
-                return next(createError(400, "No se pudo registrar el usuario"));
+                return next(createError(400, `No se pudo registrar el usuario: ${JSON.stringify(req.body)}`));
             }
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({ message: "Registro exitoso", nuevoUsuario: req.user });
@@ -51,7 +51,7 @@ export class SessionsController {
     static async current(req, res, next) {
         try {
             if (!req.user) {
-                return next(createError(401, "Usuario no autenticado"));
+                return next(createError(401, "Usuario no autenticado. Inicia sesión para continuar."));
             }
 
             const response = {

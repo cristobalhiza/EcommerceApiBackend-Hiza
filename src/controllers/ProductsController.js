@@ -122,13 +122,11 @@ class ProductsController {
             if (!isValidObjectId(id)) {
                 return next(createError(400, 'El ID del producto no es válido'));
             }
-
-            const success = await productService.deleteProduct(id);
-            if (!success) {
+            const deletedProduct = await productService.deleteProduct(id);
+            if (!deletedProduct) {
                 return next(createError(404, 'Producto no encontrado'));
             }
-
-            res.status(200).json({ message: 'Producto eliminado correctamente' });
+            res.status(200).json({ message: `Producto "${deletedProduct.title}" eliminado correctamente` });
         } catch (error) {
             next(error);
                 }

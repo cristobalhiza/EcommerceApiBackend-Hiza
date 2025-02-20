@@ -80,11 +80,7 @@ export class ProductService {
 
     async deleteProduct(id) {
         try {
-            const deletedProduct = await this.ProductManager.delete(id);
-            if (!deletedProduct) {
-                throw new Error('Producto no encontrado.');
-            }
-            return true;
+            return await this.ProductManager.delete(id);
         } catch (error) {
             throw new Error('Error eliminando producto: ' + error.message);
         }

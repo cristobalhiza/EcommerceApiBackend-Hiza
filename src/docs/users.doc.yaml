@@ -13,7 +13,7 @@ components:
           type: string
           format: email
           unique: true
-          description: User's email address, used to log in
+          description: User's email address, used for login
         age:
           type: number
           description: User's age
@@ -23,7 +23,7 @@ components:
         cart:
           type: string
           format: objectId
-          description: Reference to the user's cart
+          description: Reference to the user's shopping cart
         role:
           type: string
           description: User's role (default user)
@@ -40,36 +40,190 @@ components:
         - email
         - password
       example:
-        first_name: juan
-        last_name: burro
-        email: juanburro@example.com
+        first_name: "Juan"
+        last_name: "Burro"
+        email: "juanburro@example.com"
         age: 30
-        password: password123
+        password: "password123"
         cart: "60d21b4667d0d8992e610c85"
-        role: user
+        role: "user"
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: tokenCookie
+      description: JWT token stored in cookies for authentication.
+  requestBodies:
+    Login:
+      description: Credentials required for user authentication.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "juanburro@example.com"
+              password:
+                type: string
+                example: "password123"
+            required:
+              - email
+              - password
 paths:
   /api/sessions/registro:
     post:
-      summary: Create a new user into the database, including password hash.
+      summary: Register a new user in the database, including password hashing.
       tags:
-        - Auth
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        "201":
+          description: User successfully registered.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successful registration"
+                  newUser:
+                    $ref: '#/components/schemas/User'
+        "400":
+          description: Bad request, missing or invalid parameters.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User registration failed"
+
   /api/sessions/login:
     post:
-      summary: Login a oreviously registered user, including token into cookie.
+      summary: Log in a previously registered user and store the token in a cookie.
       tags:
-        - Auth
-  /api/sessions/current: 
+        - Authentication
+      requestBody:
+        $ref: '#/components/requestBodies/Login'
+      responses:
+        "200":
+          description: Login successful, returns a JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successful login"
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "401":
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid credentials"
+
+  /api/sessions/current:
     get:
-      summary: Get the current user's information.
+      summary: Retrieve the current logged-in user's information.
       tags:
-        - Auth
+        - Authentication
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved user information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User information successfully retrieved"
+                  user:
+                    $ref: '#/components/schemas/User'
+        "401":
+          description: Unauthorized, user is not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not authenticated"
+
   /api/sessions/logout:
     get:
-      summary: Logout the current user, end current session.
+      summary: Log out the current user and end the session.
       tags:
-        - Auth
+        - Authentication
+      responses:
+        "200":
+          description: Logout successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout successful"
+        "401":
+          description: No active session to log out.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No active session found"
+
   /api/sessions/github:
     get:
-      summary: Get the current user's information from GitHub.
+      summary: Authenticate the user using GitHub and return user information.
       tags:
-        - Auth
+        - Authentication
+      responses:
+        "200":
+          description: GitHub authentication successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "GitHub authentication successful"
+                  user:
+                    $ref: '#/components/schemas/User'
+        "401":
+          description: GitHub authentication failed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "GitHub authentication failed"

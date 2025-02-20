@@ -8,20 +8,30 @@ servers:
   - url: http://localhost:3000/api
     description: Local development server
 
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: tokenCookie
+      description: JWT token stored in cookies for authentication.
+
 paths:
   /mocks/{users}/{products}:
     get:
-      summary: Generate mock user and product data in carts
-      description: Generates a specific number of mock users with shopping carts containing up to a specified number of products.
+      summary: Generate mock user and product data in carts (Admin Only)
+      description: Generates a specific number of mock users with shopping carts containing up to a specified number of products. Requires **admin** role.
       tags:
         - Mocks
+      security:
+        - cookieAuth: []
       parameters:
         - name: users
           in: path
           required: true
           description: Number of mock users to generate.
           schema:
-            type: integer
+            type: number
             minimum: 1
             example: 5
         - name: products
@@ -29,7 +39,7 @@ paths:
           required: true
           description: Maximum number of products in each user's cart.
           schema:
-            type: integer
+            type: number
             minimum: 1
             example: 10
       responses:
@@ -56,7 +66,7 @@ paths:
                               example: "Juan"
                             last_name:
                               type: string
-                              example: "Doe"
+                              example: "Burro"
                             email:
                               type: string
                               example: "juanburro@example.com"
@@ -102,6 +112,26 @@ paths:
                   error:
                     type: string
                     example: "Invalid parameters. They must be numbers greater than 0."
+        "401":
+          description: Unauthorized - User is not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized: User is not authenticated."
+        "403":
+          description: Forbidden - User does not have admin access.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Forbidden: Admin access required."
         "500":
           description: Internal server error.
           content:

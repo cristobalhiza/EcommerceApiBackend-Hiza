@@ -44,7 +44,7 @@ export default class ProductManager {
 
     static async delete(id) {
         try {
-            return await Product.findByIdAndDelete(id);
+            return await Product.findByIdAndDelete(id).lean();
         } catch (error) {
             throw new Error('Error eliminando producto: ' + error.message);
         }

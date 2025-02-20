@@ -1,0 +1,1 @@
+[31mFATAL[39m: Error eliminando producto: this.ProductManager.findOneAndDelete is not a function

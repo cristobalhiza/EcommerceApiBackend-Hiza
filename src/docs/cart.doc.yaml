@@ -39,7 +39,12 @@ components:
             quantity: 2
           - product: "60d21b4667d0d8992e610c87"
             quantity: 1
-
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: tokenCookie
+      description: JWT token stored in cookies for authentication.
 paths:
   /api/carts:
     post:
@@ -67,7 +72,7 @@ paths:
       tags:
         - Cart
       security:
-        - bearerAuth: []
+        - cookieAuth: []
       responses:
         "200":
           description: List of carts retrieved successfully
