@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 
 function createMockProduct() {
-const code = faker.string.alphanumeric(10);
+const code = faker.string.uuid();
 const title = faker.commerce.productName();
 const description = faker.commerce.productDescription();
 const price = faker.commerce.price({ min: 100, max: 200, dec: 2 })

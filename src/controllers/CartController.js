@@ -253,13 +253,11 @@ export class CartController {
                 return next(createError(400, "No hay productos en stock suficientes para realizar la compra."));
             }
 
-            let code = uuidv4();
             let purchase_datetime = new Date();
             const amount = conStock.reduce((acum, item) => acum + item.subtotal, 0);
             let purchaser = req.user.email;
 
             let ticket = await ticketModel.create({
-                code,
                 purchase_datetime,
                 amount,
                 purchaser,

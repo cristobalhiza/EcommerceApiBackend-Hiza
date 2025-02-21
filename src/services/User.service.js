@@ -44,6 +44,10 @@ class UserService {
     async updateUser(userId, data) {
         return await this.userDAO.update(userId, data);
     }
+    
+    async deleteUser(userId) {
+        return await this.userDAO.delete(userId);
+    }
 
     async createMockUser() {
         try {

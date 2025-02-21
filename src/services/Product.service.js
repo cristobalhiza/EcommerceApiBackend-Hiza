@@ -35,7 +35,7 @@ export class ProductService {
             if (error.code === 11000 && error.keyPattern?.code) {
                 return { error: true, message: 'El código del producto ya existe, elija uno único.' };
             }
-            throw new Error('Error creando producto: ' + error.message);
+            throw new Error('Error creating product ' + error.message);
         }
     }
 
@@ -70,7 +70,7 @@ export class ProductService {
                 throw new Error('Producto no encontrado.');
             }
             if (updatedProduct.stock < 0) {
-                throw new Error('El stock del producto no puede ser negativo.');
+                throw new Error('The product stock cannot be negative');
             }
             return updatedProduct;
         } catch (error) {

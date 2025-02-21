@@ -5,7 +5,7 @@ components:
       properties:
         code:
           type: string
-          description: Unique ticket code
+          description: Unique code of the product, automatically generated using uuidv4() in the model.
         purchase_datetime:
           type: string
           format: date-time

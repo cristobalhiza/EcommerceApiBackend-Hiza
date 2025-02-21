@@ -27,10 +27,7 @@ export default class ProductManager {
         try {
             return await Product.create(product);
         } catch (error) {
-            if (error.code === 11000 && error.keyPattern && error.keyPattern.code) {
-                throw new Error('El código del producto ya existe, elija uno único.');
-            }
-            throw new Error('Error creando producto: ' + error.message);
+            throw new Error('Error creating product ' + error.message);
         }
     }
 

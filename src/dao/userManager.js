@@ -34,4 +34,13 @@ export class UserManager {
             throw error;
         }
     }
+    
+    static async delete(userId) {
+        try {
+            return await usersModel.findByIdAndDelete(userId);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            throw error;
+        }
+    }
 }
