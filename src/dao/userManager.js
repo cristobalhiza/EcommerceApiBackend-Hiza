@@ -1,5 +1,6 @@
 import { usersModel } from "./models/user.model.js";
 import { generaHash } from "../utils/utils.js";
+import mongoose from "mongoose";
 
 export class UserManager {
     static async create(usuario = {}) {
@@ -34,10 +35,11 @@ export class UserManager {
             throw error;
         }
     }
-    
+
     static async delete(userId) {
         try {
-            return await usersModel.findByIdAndDelete(userId);
+            const objectId = mongoose.Types.ObjectId.createFromHexString(userId);
+            return await usersModel.findOneAndDelete({ _id: objectId });
         } catch (error) {
             console.error('Error deleting user:', error);
             throw error;

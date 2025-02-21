@@ -1,9 +1,9 @@
 import assert from 'assert';
 import { describe, it, before, after } from 'mocha';
-import { productService } from '../../src/services/Product.service.js';
-import { connDB } from '../../src/connDB.js';
-import { config } from '../../src/config/config.js';
-import Product from '../../src/dao/models/product.model.js';
+import { productService } from '../src/services/Product.service.js';
+import { connDB } from '../src/connDB.js';
+import { config } from '../src/config/config.js';
+import Product from '../src/dao/models/product.model.js';
 
 describe('Product Service Tests', () => {
   let createdProduct = null;

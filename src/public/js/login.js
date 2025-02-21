@@ -1,4 +1,4 @@
-import loggerUtil from "../../utils/logger.util.js";
+import createLogger from "../../utils/logger.util.js";
 
 const inputEmail = document.getElementById('email');
 const inputPassword = document.getElementById('password');
@@ -45,7 +45,7 @@ btnSubmit.addEventListener('click', async (e) => {
         const datos = await respuesta.json();
 
         if (datos.usuario) {
-            loggerUtil.INFO('Usuario autenticado:', datos.usuario);
+            createLogger.INFO('Usuario autenticado:', datos.usuario);
             window.location.href = '/current';
         } else {
             mostrarMensaje('Ocurrió un error al iniciar sesión. Inténtelo de nuevo.');

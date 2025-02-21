@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { userService } from '../../src/services/User.service.js';
-import { config } from '../../src/config/config.js';
-import { connDB } from '../../src/connDB.js';
+import { userService } from '../src/services/User.service.js';
+import { config } from '../src/config/config.js';
+import { connDB } from '../src/connDB.js';
 
 describe(
     'Sessions Testing',
@@ -26,5 +26,15 @@ describe(
                 expect(error.message).to.equal('Todos los campos requeridos deben completarse.')
             }
         });
+        it('Should assign user roles by default', async () => {
+            const data = {
+                email: 'testchai@test.com',
+                password: '12345678'
+            }
+            const user = await userService.createUser(data);
+            expect(user).to.have.property('role');
+            expect(user.role).to.equal('user');
+            await userService.deleteUser(user._id);
+        })
     }
 )

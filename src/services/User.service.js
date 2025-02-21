@@ -2,7 +2,7 @@
 import { UserManager } from "../dao/userManager.js";
 import { comparaPassword, generaHash } from "../utils/utils.js";
 import { createMockUser } from "../utils/mocks.utils.js"
-import loggerUtil from "../utils/logger.util.js";
+import createLogger from "../utils/logger.util.js";
 
 class UserService {
     constructor(DAO) {
@@ -10,8 +10,16 @@ class UserService {
     }
 
     async createUser(userData) {
-        return await this.userDAO.create(userData);
-    }
+        try {
+          return await this.userDAO.create(userData);
+        } catch (error) {
+          if (error.name === 'ValidationError') {
+            throw new Error("Todos los campos requeridos deben completarse.");
+          }
+          throw error;
+        }
+      }
+      
     
     async updatePassword(userId, oldPassword, newPassword) {
         const user = await this.userDAO.getBy({ _id: userId });
@@ -35,18 +43,18 @@ class UserService {
     async initializeAdmin() {
         const adminCreated = await this.userDAO.crearAdminInicial();
         if (adminCreated) {
-            loggerUtil.INFO("Usuario rol admin creado con éxito.");
+            createLogger.INFO("Usuario rol admin creado con éxito.");
         } else {
-            loggerUtil.INFO("El usuario rol admin ya existe.");
+            createLogger.INFO("El usuario rol admin ya existe.");
         }
         return adminCreated;
     }
     async updateUser(userId, data) {
         return await this.userDAO.update(userId, data);
     }
-    
+
     async deleteUser(userId) {
-        return await this.userDAO.delete(userId);
+        return  await this.userDAO.delete(userId);
     }
 
     async createMockUser() {

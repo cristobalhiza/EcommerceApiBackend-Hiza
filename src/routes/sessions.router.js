@@ -5,11 +5,6 @@ import { passportCall } from '../utils/utils.js';
 
 export const router = Router();
 
-router.get(
-    '/error',
-    SessionsController.error
-);
-
 router.post(
     '/registro',
     passportCall('registro'),

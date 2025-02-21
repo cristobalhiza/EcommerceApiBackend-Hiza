@@ -7,8 +7,7 @@ import { comparaPassword, generaHash } from '../utils/utils.js';
 import { config } from "./config.js";
 import { UserManager } from "../dao/userManager.js";
 import { cartService } from "../services/Cart.service.js";
-import UsersDTO from "../DTO/UsersDTO.js";
-
+import createLogger from "../utils/logger.util.js";
 const buscarToken = req => {
     return req.cookies.tokenCookie || null;
 };
@@ -25,15 +24,16 @@ export const iniciarPassport = () => {
             async (req, username, password, done) => {
                 try {
                     const { first_name: nombre, ...otros } = req.body;
-                    if (!nombre || !username || !password) {
-                        return done(null, false, { message: "Todos los campos requeridos deben completarse." });
+                    if (!username || !password) {
+                        return done(null, false, { status: 400, message: "Todos los campos requeridos deben completarse." });
                     }
+                    
                     if (password.length < 8) {
-                        return done(null, false, { message: "La contraseña debe tener al menos 8 caracteres." });
+                        return done(null, false, { status: 400, message: "La contraseña debe tener al menos 8 caracteres." });
                     }
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(username)) {
-                        return done(null, false, { message: "El email no tiene un formato válido." });
+                        return done(null, false, { status: 400, message: "El email no tiene un formato válido." });
                     }
                     const existe = await userService.getUserBy({ email: username })
                     if (existe) {
@@ -51,7 +51,6 @@ export const iniciarPassport = () => {
                     });
                     return done(null, nuevoUsuario);
                 } catch (error) {
-                    console.error('Error durante el registro:', error);
                     return done(error); //segundo argumento de done es el usuario
                 }
             }
@@ -67,10 +66,10 @@ export const iniciarPassport = () => {
                 try {
                     const usuario = await UserManager.getBy({ email: username })
                     if (!usuario) {
-                        return done(null, false, { message: "Credenciales inválidas" });
+                        return done(null, false, { status: 401, message: "Credenciales inválidas" });
                     }
                     if (!comparaPassword(password, usuario.password)) {
-                        return done(null, false, { message: "Credenciales inválidas." });
+                        return done(null, false, { status: 401, message: "Credenciales inválidas." });
                     }
 
                     delete usuario.password
@@ -128,7 +127,7 @@ passport.use('current',
                 }
                 return done(null, false, { message: "Usuario no autenticado o inválido." });
             } catch (error) {
-                console.error("Error en estrategia JWT:", error);
+                createLogger.FATAL("Error en estrategia JWT: " + error.message);
                 return done(error, false);
             }
         }

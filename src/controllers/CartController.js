@@ -2,7 +2,6 @@
 import { productService } from '../services/Product.service.js';
 import { cartService } from '../services/Cart.service.js';
 import { isValidObjectId } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 import { ticketModel } from '../dao/models/ticketModel.js';
 import createError from 'http-errors';
 

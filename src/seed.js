@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Product from './dao/models/product.model.js';
 import { config } from './config/config.js';
-import loggerUtil from './utils/logger.util.js';
+import createLogger from './utils/logger.util.js';
 
 const MONGO_URI = config.MONGO_URL;
 
@@ -43,14 +43,14 @@ const seedDatabase = async () => {
         await mongoose.connect(MONGO_URI);
 
         await Product.deleteMany({});
-        loggerUtil.INFO('Collection eliminada!');
+        createLogger.INFO('Collection eliminada!');
 
         await Product.insertMany(products);
-        loggerUtil.INFO(`Productos agregados a la DB ${config.DB_NAME}`);;
+        createLogger.INFO(`Productos agregados a la DB ${config.DB_NAME}`);;
 
         mongoose.disconnect();
     } catch (error) {
-        loggerUtil.FATAL('Error:', error);
+        createLogger.FATAL('Error:', error);
         process.exit(1);
     }
 };

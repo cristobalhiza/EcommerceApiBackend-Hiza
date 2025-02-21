@@ -9,7 +9,7 @@ import { serve, setup } from 'swagger-ui-express';
 
 import { __dirname } from './utils/utils.js';
 import { config } from './config/config.js';
-import loggerUtil from './utils/logger.util.js';
+import createLogger from './utils/logger.util.js';
 import docSpec from './utils/docSpec.util.js';
 
 import errorHandler from './middleware/errorHandler.js';
@@ -90,7 +90,7 @@ export class Server {
 
     start() {
         this.app.listen(this.PORT, () => {
-            loggerUtil.INFO(`Server escuchando en puerto ${this.PORT}`);
+            createLogger.INFO(`Server escuchando en puerto ${this.PORT}`);
         });
     }
 }

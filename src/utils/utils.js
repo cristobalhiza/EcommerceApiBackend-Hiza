@@ -2,14 +2,13 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import passport from 'passport';
-import mongoose from 'mongoose';
-import loggerUtil from './logger.util.js';
+import createLogger from './logger.util.js';
 
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.resolve(path.dirname(__filename), "..");
 
 export const generaHash = (password) => {
-    const salt = bcrypt.genSaltSync(10); 
+    const salt = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(password, salt);
 };
 
@@ -18,13 +17,13 @@ export const comparaPassword = (password, hash) => {
 };
 
 export const errorHandler = (res, error) => {
-    loggerUtil.FATAL('Error en el servidor:', error);
+    createLogger.FATAL('Error en el servidor:', error);
     const statusCode = error.statusCode || 500;
     const message = error.message || 'FATAL ERROR';
     if (statusCode.toString().startsWith('4')) {
-        loggerUtil.WARN(error);
+        createLogger.WARN(error);
     } else {
-        loggerUtil.FATAL(error);
+        createLogger.FATAL(error);
     }
     return res.status(statusCode).json({
         error: 'Error inesperado en el servidor. Por favor, intente más tarde.',
@@ -39,14 +38,12 @@ export const passportCall = (estrategia) => (req, res, next) => {
         }
 
         if (!user) {
-            if (info?.message?.includes("Ya existe un usuario con email")) {
-                return res.status(400).json({ error: info.message });
-            }
-            
-            return res.status(401).json({
+            const statusCode = info?.status || 400;
+            return res.status(statusCode).json({
                 error: info?.message || 'Usuario no autorizado. Verifica tus credenciales.',
             });
         }
+
 
         req.user = user;
         next();

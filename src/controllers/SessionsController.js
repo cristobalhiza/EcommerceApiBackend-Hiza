@@ -1,13 +1,23 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/config.js';
 import UsersDTO from '../DTO/UsersDTO.js';
+import createError from 'http-errors';
 
 export class SessionsController {
     static async registro(req, res, next) {
         try {
             if (!req.user) {
-                return next(createError(400, `No se pudo registrar el usuario: ${JSON.stringify(req.body)}`));
+                if (req.authInfo?.status === 400) {
+                    return res.status(400).json({ error: req.authInfo.message });
+                }
+            
+                if (req.authInfo?.message === "Missing credentials") {
+                    return res.status(400).json({ error: "Todos los campos requeridos deben completarse." });
+                }
+            
+                return res.status(400).json({ error: "No se pudo registrar el usuario." });
             }
+
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({ message: "Registro exitoso", nuevoUsuario: req.user });
         } catch (error) {
@@ -77,18 +87,18 @@ export class SessionsController {
     static async logout(req, res, next) {
         try {
             const token = req.cookies?.tokenCookie;
-            
+
             if (!token) {
                 return res.status(401).json({ error: "No hay ningún usuario autenticado." });
             }
-    
+
             res.clearCookie('tokenCookie');
-    
+
             const { web } = req.query;
             if (web) {
                 return res.redirect(`/login?mensaje=¡Logout exitoso!`);
             }
-    
+
             res.setHeader('Content-Type', 'application/json');
             return res.status(200).json({ mensaje: '¡Logout exitoso!' });
         } catch (error) {
@@ -115,11 +125,4 @@ export class SessionsController {
         }
     }
 
-    static async error(req, res, next) {
-        try {
-            return next(createError(401, "Error al autenticar"));
-        } catch (error) {
-            next(error);
-        }
-    }
 }
