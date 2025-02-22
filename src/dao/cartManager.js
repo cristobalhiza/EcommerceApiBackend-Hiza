@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import Cart from './models/cart.model.js';
 import createLogger from '../utils/logger.util.js';
 
@@ -6,7 +5,6 @@ export class CartManager {
     static async create() {
         return await Cart.create({ products: [] });
     }
-
 
     static async getCart(cartId) {
         const cart = await Cart.findById(cartId).populate('products.product');
@@ -17,21 +15,23 @@ export class CartManager {
         return await Cart.find().populate('products.product');
     }
 
-    static async update(filtro={}, cartData) {
+    static async update(filtro, cartData) {
+        if (typeof filtro === "string") {
+            filtro = { _id: filtro };
+        }
         return await Cart.updateOne(filtro, cartData);
     }
 
     static async clearCart(cartId) {
         const cart = await Cart.findById(cartId);
         if (!cart) {
-            createLogger.WARN("Carrito no encontrado en la base de datos."); 
+            createLogger.WARN("Carrito no encontrado en la base de datos.");
             return null;
         }
         cart.products = [];
         await cart.save();
         return cart;
     }
-
 
     static async deleteProductFromCart(cartId, productId) {
         const cart = await this.getCart(cartId);

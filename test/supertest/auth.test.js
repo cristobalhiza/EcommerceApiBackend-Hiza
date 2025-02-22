@@ -96,18 +96,15 @@ describe('Auth Testing', () => {
     )
     it('GET /api/sessions/logout should respond with 200 and clear the cookie', async () => {
         try {
-            console.log("Verificando authCookie antes de logout:", authCookie);
     
             if (!authCookie) {
                 throw new Error("authCookie no está definida antes del logout. El login falló.");
             }
     
             const response = await requester.get('/sessions/logout').set('Cookie', authCookie);
-            console.log("Respuesta en logout autenticado:", response.body);
             expect(response.status).to.equal(200);
     
             expect(response.headers['set-cookie']).to.exist;
-            console.log("Cookie después del logout:", response.headers['set-cookie']);
         } catch (error) {
             createLogger.WARN("Error during logout: " + error.message);
             throw error;

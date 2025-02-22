@@ -2,11 +2,10 @@ import { expect } from "chai";
 import { config } from "../../src/config/config.js";
 import { connDB } from "../../src/connDB.js";
 import supertest from "supertest";
-import createLogger from "../../src/utils/logger.util.js";
 
 const requester = supertest(`http://localhost:${config.PORT}/api`);
 
-describe('Testing admin login, CRUD, logout', () => {
+describe('Testing admin login, products CRUD, logout', () => {
     let authCookie;
     let productId; 
 
@@ -67,7 +66,6 @@ describe('Testing admin login, CRUD, logout', () => {
 
     it('PUT /api/products/:pid should respond with a diferent product', async () => {
         const { body } = await requester.get(`/products/${productId}`).set('Cookie', authCookie);
-        console.log(body.price);
         const oldPrice = body.price;
         const updatedProduct = { ...newProduct, price: 150 };
         const { body: body2, status } = await requester
@@ -102,7 +100,7 @@ describe('Testing admin login, CRUD, logout', () => {
         const { status, body } = await requester
             .post('/products/')
             .set('Cookie', authCookie)
-            .send({ title: "Producto sin precio" }); // Falta `price`, `category`, `stock`, etc.
+            .send({ title: "Producto sin precio" }); 
         
         expect(status).to.equal(400);
         expect(body).to.have.property('error').that.includes("Faltan campos obligatorios");

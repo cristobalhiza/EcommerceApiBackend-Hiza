@@ -7,6 +7,7 @@ import logger from '../utils/logger.util.js';
 class MocksController {
     async createMockData(req, res, next) {
         try {
+
             const usersCount = Math.max(parseInt(req.params.users, 10));
             const maxProductsPerCart = Math.max(parseInt(req.params.products, 10)); 
 

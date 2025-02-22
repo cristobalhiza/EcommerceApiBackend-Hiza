@@ -28,19 +28,3 @@ router.get(
     SessionsController.logout
 );
 
-router.get(
-    '/github',
-    passport.authenticate(
-        'github',
-        {
-            scope: ['user:email'],
-            session: false
-        }
-    )
-);
-
-router.get(
-    '/github/callback',
-    passport.authenticate('github', { failureRedirect: '/api/sessions/error', session: false }),
-    SessionsController.githubCallback
-);

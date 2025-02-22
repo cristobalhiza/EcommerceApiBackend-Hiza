@@ -143,6 +143,21 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         "500":
           $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Clear the cart
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      responses:
+        "200":
+          description: Cart cleared successfully
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /api/carts/{cid}:
     get:
@@ -168,16 +183,17 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
     put:
-      summary: Update a cart
+      summary: "Update a cart"
+      description: "Updates the products in a cart by replacing its current products with a new list."
       tags:
-        - Cart
+        - Cart 
       security:
         - cookieAuth: []
       parameters:
         - name: cid
           in: path
           required: true
-          description: Cart ID
+          description: "Cart ID"
           schema:
             type: string
       requestBody:
@@ -194,10 +210,10 @@ paths:
                     properties:
                       product:
                         type: string
-                        description: Product ID
+                        example: "67b9bfb8a19d94dee141259b"
                       quantity:
-                        type: number
-                        description: Quantity to update
+                        type: integer
+                        example: 2
       responses:
         "200":
           description: Cart updated successfully
@@ -269,22 +285,5 @@ paths:
           $ref: '#/components/responses/BadRequest'
         "403":
           $ref: '#/components/responses/Unauthorized'
-        "500":
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/carts/clear:
-    delete:
-      summary: Clear the cart
-      tags:
-        - Cart
-      security:
-        - cookieAuth: []
-      responses:
-        "200":
-          description: Cart cleared successfully
-        "400":
-          $ref: '#/components/responses/BadRequest'
-        "404":
-          $ref: '#/components/responses/NotFound'
         "500":
           $ref: '#/components/responses/InternalServerError'

@@ -40,3 +40,7 @@
 [31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
 [31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
 [31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Parameter "filter" to updateOne() must be an object, got "67b9c8424b0aa447f8585c2a" (type string)
+[31mFATAL[39m: 500 - Error del servidor: Parameter "filter" to updateOne() must be an object, got "67b9c8424b0aa447f8585c2a" (type string)
+[31mFATAL[39m: 500 - Error del servidor: CartManager.update is not a function
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado

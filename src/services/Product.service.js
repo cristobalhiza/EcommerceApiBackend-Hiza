@@ -19,10 +19,7 @@ export class ProductService {
         try {
             const product = await this.ProductManager.getBy(filter);
 
-            if (product) {
-                return product;
-            }
-            return null;
+            return product || null;
         } catch (error) {
             throw new Error('Error obteniendo producto: ' + error.message);
         }

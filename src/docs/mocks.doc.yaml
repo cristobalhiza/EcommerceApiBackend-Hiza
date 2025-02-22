@@ -1,23 +1,12 @@
-openapi: 3.0.0
-info:
-  title: Mock Data API
-  description: API to generate mock user data with shopping carts and products.
-  version: 1.0.0
-
-servers:
-  - url: http://localhost:3000/api
-    description: Local development server
-
 components:
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
       name: tokenCookie
-      description: JWT token stored in cookies for authentication.
 
 paths:
-  /mocks/{users}/{products}:
+  /api/mocks/{users}/{products}:
     get:
       summary: Generate mock user and product data in carts (Admin Only)
       description: Generates a specific number of mock users with shopping carts containing up to a specified number of products. Requires **admin** role.

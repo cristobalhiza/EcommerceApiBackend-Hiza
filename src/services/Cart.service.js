@@ -8,22 +8,22 @@ class CartService {
 
     async addProductToCart(cart, product, quantity) {
         const existingProduct = cart.products.find(item => item.product.toString() === product._id.toString());
-    
+
         const totalQuantity = existingProduct ? existingProduct.quantity + quantity : quantity;
         if (product.stock < totalQuantity) {
             throw new Error('La cantidad total en el carrito excede el stock disponible.');
         }
-    
+
         if (existingProduct) {
             existingProduct.quantity += quantity;
         } else {
             cart.products.push({ product: product._id, quantity });
         }
-    
+
         product.stock -= quantity;
         await ProductManager.update(product._id, { stock: product.stock });
-    
-        await cart.save(); 
+
+        await cart.save();
         return cart;
     }
 
@@ -41,30 +41,23 @@ class CartService {
 
     async updateProductQuantity(cartId, productId, quantity) {
         const cart = await CartManager.getCart(cartId);
-    
-        console.log("Cart before updating quantity:", JSON.stringify(cart, null, 2));
-    
-        cart.products.forEach(p => {
-            console.log("Stored product ID in cart:", String(p.product));
-            console.log("Expected product ID:", String(productId));
-        });
-    
-        const productInCart = cart.products.find(p => 
+
+        const productInCart = cart.products.find(p =>
             p.product && String(p.product._id || p.product) === String(productId)
         );
-            
+
         if (!productInCart) {
             console.error("Product not found in cart. Full cart data:", JSON.stringify(cart.products, null, 2));
             throw new Error('Producto no encontrado en el carrito.');
         }
-    
+
         productInCart.quantity = quantity;
         await cart.save();
-    
+
         return cart;
     }
-    
-    async updateCart(filtro={}, cartData) {
+
+    async updateCart(filtro = {}, cartData) {
         return await CartManager.update(filtro, cartData);
     }
 

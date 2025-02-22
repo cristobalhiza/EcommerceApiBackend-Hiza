@@ -65,38 +65,38 @@ export class CartController {
         try {
             const { cid } = req.params;
             const { products } = req.body;
-
+    
             if (!isValidObjectId(cid)) {
                 return next(createError(400, 'El ID del carrito no es válido.'));
             }
-
+    
             if (!Array.isArray(products) || products.length === 0) {
                 return next(createError(400, 'El cuerpo de la solicitud debe incluir un array de productos.'));
             }
-
+    
             const validProducts = await Promise.all(
                 products.map(async (product) => {
-                    if (!isValidObjectId(product.productId) || typeof product.quantity !== 'number' || product.quantity <= 0) {
+                    if (!isValidObjectId(product.product) || typeof product.quantity !== 'number' || product.quantity <= 0) {
                         return null;
                     }
-
-                    const existingProduct = await productService.getProductBy(product.productId);
+    
+                    const existingProduct = await productService.getProductBy({ _id: product.product });
                     return existingProduct ? product : null;
-
                 })
             );
+            
             const filteredProducts = validProducts.filter(product => product !== null);
-
+    
             if (filteredProducts.length === 0) {
                 return next(createError(400, 'Todos los productos son inválidos o no existen.'));
             }
-
-            const updatedCart = await cartService.updateCart(cid, { products: filteredProducts });
+    
+            const updatedCart = await cartService.updateCart({ _id: cid }, { products: filteredProducts });
             res.status(200).json({ message: 'Carrito actualizado', cart: updatedCart });
         } catch (error) {
             next(error);
         }
-    }
+    }    
 
     static async updateProductQuantity(req, res, next) {
         try {
@@ -120,11 +120,7 @@ export class CartController {
             const product = await productService.getProductBy({ _id: pid });
             if (!product) {
                 return res.status(404).json({ error: 'Producto no encontrado' });
-            }
-    
-            console.log("CID recibido en API:", req.params.cid);
-            console.log("PID recibido en API:", req.params.pid);
-            console.log("Cart before update:", await cartService.getCartById(req.params.cid));            
+            }      
     
             const updatedCart = await cartService.updateProductQuantity(cid, pid, parsedQuantity);
             return res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
