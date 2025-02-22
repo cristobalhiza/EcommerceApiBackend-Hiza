@@ -1,3 +1,42 @@
 [31mFATAL[39m: Error eliminando producto: this.ProductManager.findOneAndDelete is not a function
 [31mFATAL[39m: This is a fatal error message.
 [31mFATAL[39m: 500 - Error del servidor: createError is not defined
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Error creating product Error creating product E11000 duplicate key error collection: EcommerceBackend2.products index: code_1 dup key: { code: "TESTCART123" }
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: mongoose is not defined
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: mongoose is not defined
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado en el carrito.
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado en el carrito.
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado en el carrito.
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado en el carrito.
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado en el carrito.
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado
+[31mFATAL[39m: 500 - Error del servidor: Producto no encontrado

@@ -100,7 +100,7 @@ export class SessionsController {
             }
 
             res.setHeader('Content-Type', 'application/json');
-            return res.status(200).json({ mensaje: '¡Logout exitoso!' });
+            return res.status(200).json({ message: '¡Logout exitoso!' });
         } catch (error) {
             next(error);
         }

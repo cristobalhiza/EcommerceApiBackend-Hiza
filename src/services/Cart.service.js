@@ -41,18 +41,29 @@ class CartService {
 
     async updateProductQuantity(cartId, productId, quantity) {
         const cart = await CartManager.getCart(cartId);
-        const productInCart = cart.products.find(p => p.product.equals(mongoose.Types.ObjectId(productId)));
-
+    
+        console.log("Cart before updating quantity:", JSON.stringify(cart, null, 2));
+    
+        cart.products.forEach(p => {
+            console.log("Stored product ID in cart:", String(p.product));
+            console.log("Expected product ID:", String(productId));
+        });
+    
+        const productInCart = cart.products.find(p => 
+            p.product && String(p.product._id || p.product) === String(productId)
+        );
+            
         if (!productInCart) {
+            console.error("Product not found in cart. Full cart data:", JSON.stringify(cart.products, null, 2));
             throw new Error('Producto no encontrado en el carrito.');
         }
-
+    
         productInCart.quantity = quantity;
         await cart.save();
-
+    
         return cart;
     }
-
+    
     async updateCart(filtro={}, cartData) {
         return await CartManager.update(filtro, cartData);
     }

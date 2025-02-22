@@ -102,28 +102,33 @@ export class CartController {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
-
+    
             if (!isValidObjectId(cid) || !isValidObjectId(pid)) {
                 return res.status(400).json({ error: 'El ID del carrito o producto no es válido' });
             }
-
+    
             const parsedQuantity = parseInt(quantity);
-            if (parsedQuantity <= 0) {
+            if (!parsedQuantity || isNaN(parsedQuantity) || parsedQuantity <= 0) {
                 return res.status(400).json({ error: 'La cantidad debe ser mayor que cero.' });
             }
-
-            const cart = await cartService.getCartById(cid)
+    
+            const cart = await cartService.getCartById(cid);
             if (!cart) {
                 return res.status(404).json({ error: 'Carrito no encontrado' });
             }
-
-            const product = await productService.getProductBy({ pid });
+    
+            const product = await productService.getProductBy({ _id: pid });
             if (!product) {
                 return res.status(404).json({ error: 'Producto no encontrado' });
             }
-
+    
+            console.log("CID recibido en API:", req.params.cid);
+            console.log("PID recibido en API:", req.params.pid);
+            console.log("Cart before update:", await cartService.getCartById(req.params.cid));            
+    
             const updatedCart = await cartService.updateProductQuantity(cid, pid, parsedQuantity);
-            res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
+            return res.status(200).json({ message: 'Cantidad actualizada', cart: updatedCart });
+    
         } catch (error) {
             next(error);
         }

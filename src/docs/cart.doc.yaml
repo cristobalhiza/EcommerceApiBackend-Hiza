@@ -122,24 +122,23 @@ components:
 paths:
   /api/carts:
     post:
-      summary: Create an empty cart.
+      summary: Create an empty cart
       tags:
         - Cart
       responses:
         "201":
-          $ref: '#/components/responses/CreateCartSuccess'
+          description: Cart created successfully
         "500":
           $ref: '#/components/responses/InternalServerError'
-
     get:
-      summary: Get all carts (Admin only).
+      summary: Retrieve all carts (admin only)
       tags:
         - Cart
       security:
         - cookieAuth: []
       responses:
         "200":
-          $ref: '#/components/responses/GetCartsSuccess'
+          description: Carts retrieved successfully
         "401":
           $ref: '#/components/responses/Unauthorized'
         "500":
@@ -147,9 +146,11 @@ paths:
 
   /api/carts/{cid}:
     get:
-      summary: Get a cart by ID.
+      summary: Retrieve a cart by ID
       tags:
         - Cart
+      security:
+        - cookieAuth: []
       parameters:
         - name: cid
           in: path
@@ -159,18 +160,19 @@ paths:
             type: string
       responses:
         "200":
-          $ref: '#/components/responses/GetCartSuccess'
+          description: Cart retrieved successfully
         "400":
           $ref: '#/components/responses/BadRequest'
         "404":
           $ref: '#/components/responses/NotFound'
         "500":
           $ref: '#/components/responses/InternalServerError'
-
     put:
-      summary: Update a cart.
+      summary: Update a cart
       tags:
         - Cart
+      security:
+        - cookieAuth: []
       parameters:
         - name: cid
           in: path
@@ -190,13 +192,55 @@ paths:
                   items:
                     type: object
                     properties:
-                      productId:
+                      product:
                         type: string
+                        description: Product ID
                       quantity:
                         type: number
+                        description: Quantity to update
       responses:
         "200":
-          $ref: '#/components/responses/UpdateCartSuccess'
+          description: Cart updated successfully
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/carts/{cid}/product/{pid}:
+    put:
+      summary: Update the quantity of a product in a cart
+      tags:
+        - Cart
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: Cart ID
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                  description: New quantity of the product in the cart
+      responses:
+        "200":
+          description: Product quantity updated successfully
         "400":
           $ref: '#/components/responses/BadRequest'
         "404":
@@ -206,9 +250,11 @@ paths:
 
   /api/carts/{cid}/purchase:
     post:
-      summary: Complete a purchase for a cart.
+      summary: Complete the purchase of a cart
       tags:
         - Cart
+      security:
+        - cookieAuth: []
       parameters:
         - name: cid
           in: path
@@ -218,7 +264,7 @@ paths:
             type: string
       responses:
         "200":
-          $ref: '#/components/responses/PurchaseSuccess'
+          description: Purchase completed successfully
         "400":
           $ref: '#/components/responses/BadRequest'
         "403":
@@ -228,20 +274,14 @@ paths:
 
   /api/carts/clear:
     delete:
-      summary: Clear all products from the cart.
+      summary: Clear the cart
       tags:
         - Cart
+      security:
+        - cookieAuth: []
       responses:
         "200":
           description: Cart cleared successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Cart cleared successfully"
         "400":
           $ref: '#/components/responses/BadRequest'
         "404":
